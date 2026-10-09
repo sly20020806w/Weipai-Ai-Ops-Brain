@@ -1,0 +1,42 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "v1", "kind": "ServiceAccount",
+      "metadata": {"name": "ai-reader", "namespace": "${PLATFORM_NAMESPACE}"},
+      "automountServiceAccountToken": false
+    },
+    {
+      "apiVersion": "v1", "kind": "ServiceAccount",
+      "metadata": {"name": "ai-executor", "namespace": "${PLATFORM_NAMESPACE}"},
+      "automountServiceAccountToken": false
+    },
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", "kind": "ClusterRole",
+      "metadata": {"name": "${BINDING_PREFIX}-namespace-reader"},
+      "rules": [{"apiGroups": [""], "resources": ["namespaces"], "verbs": ["get", "list"]}]
+    },
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", "kind": "ClusterRoleBinding",
+      "metadata": {"name": "${BINDING_PREFIX}-namespace-reader"},
+      "subjects": [{"kind": "ServiceAccount", "name": "ai-reader", "namespace": "${PLATFORM_NAMESPACE}"}],
+      "roleRef": {"apiGroup": "rbac.authorization.k8s.io", "kind": "ClusterRole", "name": "${BINDING_PREFIX}-namespace-reader"}
+    },
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", "kind": "Role",
+      "metadata": {"name": "${BINDING_PREFIX}-reader", "namespace": "${TARGET_NAMESPACE}"},
+      "rules": [
+        {"apiGroups": [""], "resources": ["pods"], "verbs": ["get", "list"]},
+        {"apiGroups": [""], "resources": ["events"], "verbs": ["get", "list", "watch"]},
+        {"apiGroups": ["apps"], "resources": ["deployments"], "verbs": ["get", "list"]}
+      ]
+    },
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", "kind": "RoleBinding",
+      "metadata": {"name": "${BINDING_PREFIX}-reader", "namespace": "${TARGET_NAMESPACE}"},
+      "subjects": [{"kind": "ServiceAccount", "name": "ai-reader", "namespace": "${PLATFORM_NAMESPACE}"}],
+      "roleRef": {"apiGroup": "rbac.authorization.k8s.io", "kind": "Role", "name": "${BINDING_PREFIX}-reader"}
+    }
+  ]
+}

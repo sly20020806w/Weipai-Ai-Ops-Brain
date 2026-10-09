@@ -1,0 +1,10 @@
+packages:
+  - .
+
+# Step 55：修复三项 YAML 解析 CPU 拒绝服务公告，保留 4.x 兼容接口。
+overrides:
+  js-yaml@4: 4.3.2
+
+# Node 测试使用 MSW 服务端拦截，不需要浏览器 Service Worker 安装脚本。
+allowBuilds:
+  msw: false

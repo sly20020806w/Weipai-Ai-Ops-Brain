@@ -1,0 +1,130 @@
+import { expect, test } from '@playwright/test';
+import type { GraphContext, KnowledgeView, RunbookView } from '../src/api/generated/types.gen';
+
+test('真实 API 服务图、Runbook/Knowledge 增删改持久化与手机布局', async ({ page, context }) => {
+  test.setTimeout(90_000);
+  const password = process.env.WEIPAI_FRONTEND_SMOKE_PASSWORD;
+  if (!password) throw new Error('未收到临时密码');
+  const remote: string[] = [], errors: string[] = [], writes: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await context.route('**/*', async (route) => {
+    const request = route.request(), url = new URL(request.url());
+    if (url.hostname !== '127.0.0.1') { remote.push(url.origin); await route.abort(); return; }
+    if (url.pathname.startsWith('/api/') && request.method() !== 'GET' && !url.pathname.startsWith('/api/auth/')) writes.push(`${request.method()} ${url.pathname}`);
+    await route.continue();
+  });
+  await page.goto('/services/payment-service');
+  await page.getByLabel('账户', { exact: true }).fill('local-browser-owner');
+  await page.getByLabel('密码', { exact: true }).fill(password);
+  await page.getByRole('button', { name: '登录', exact: true }).click();
+  await expect(page).toHaveURL(/\/services\/payment-service$/);
+  const graph: GraphContext = await (await page.request.get('/api/services/payment-service?hops=2')).json();
+  expect(graph.nodes.length).toBeGreaterThan(10); expect(graph.edges.length).toBeGreaterThan(10);
+  await expect(page.locator('.graph-node')).toHaveCount(graph.nodes.length);
+  await expect(page.locator('.graph-edge')).toHaveCount(graph.edges.length);
+  const first = graph.edges[0]!;
+  const from = graph.nodes.find((node) => node.id === first.from_node_id)!.name;
+  const to = graph.nodes.find((node) => node.id === first.to_node_id)!.name;
+  const edge = page.getByRole('button', { name: `关系 ${from} → ${to} · ${first.relation} · ${first.source}`, exact: true });
+  await edge.focus();
+  await expect(page.getByRole('tooltip')).toContainText(first.source);
+  await expect(page.getByRole('tooltip')).toContainText(`${(first.confidence * 100).toFixed(1)}%`);
+  await expect(page.getByRole('tooltip')).toContainText('新鲜度');
+  await edge.press('Enter'); await expect(page.getByText('关系详情', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '刷新关系图', exact: true }).focus();
+  await edge.scrollIntoViewIfNeeded();
+  const midpoint = await edge.locator('path').first().evaluate((element) => {
+    const path = element as SVGPathElement;
+    const point = path.getPointAtLength(path.getTotalLength() / 2);
+    const screen = point.matrixTransform(path.getScreenCTM()!);
+    return { x: screen.x, y: screen.y };
+  });
+  await page.mouse.move(midpoint.x, midpoint.y);
+  await expect(page.getByRole('tooltip')).toContainText('来源');
+  await expect(page.getByRole('tooltip')).toContainText('新鲜度');
+  await page.locator('.graph-relations button').first().click();
+  await expect(page.locator('.graph-layout').getByText(first.source, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '节点 payment-service', exact: true }).click();
+  await expect(page.getByText('节点详情', { exact: true })).toBeVisible();
+  await page.screenshot({ path: '../.cache/frontend-smoke/cognition-graph.png', fullPage: true, animations: 'disabled' });
+  await page.getByLabel('邻居跳数', { exact: true }).selectOption('1');
+  await page.getByLabel('关系方向', { exact: true }).selectOption('downstream');
+  await page.reload();
+  await expect(page.getByLabel('邻居跳数', { exact: true })).toHaveValue('1');
+  await expect(page.getByLabel('关系方向', { exact: true })).toHaveValue('downstream');
+  await expect(page.locator('.graph-node')).not.toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: '../.cache/frontend-smoke/cognition-graph-mobile.png', fullPage: true, animations: 'disabled' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
+  await page.goto('/knowledge'); await page.getByRole('link', { name: '新建知识', exact: true }).click();
+  await page.getByLabel('知识类型', { exact: true }).selectOption('standard');
+  await page.getByLabel('知识内容', { exact: true }).fill('浏览器验收：支付发布后必须独立验证');
+  await page.getByLabel('知识来源', { exact: true }).fill('本机页面验收');
+  await page.getByLabel('生效时间（UTC）', { exact: true }).fill('2026-10-08T00:00');
+  await page.getByLabel('失效时间（UTC，可留空）', { exact: true }).fill('2027-01-01T00:00');
+  const createdRule = page.waitForResponse((response) => response.request().method() === 'POST' && response.url().endsWith('/api/knowledge'));
+  await page.getByRole('button', { name: '保存知识', exact: true }).click();
+  const ruleResponse = await createdRule; expect(ruleResponse.status()).toBe(201);
+  const rule: KnowledgeView = await ruleResponse.json();
+  await expect(page).toHaveURL(new RegExp(`/knowledge/${rule.id}$`));
+  expect(rule.valid_from).toBe('2026-10-08T00:00:00Z'); expect(rule.embedding_dimensions).toBe(4);
+  await page.reload(); await expect(page.getByText(rule.content, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '编辑知识', exact: true }).click();
+  await page.getByLabel('知识内容', { exact: true }).fill(rule.content + '（已编辑）');
+  const editedRule = page.waitForResponse((response) => response.request().method() === 'PUT');
+  await page.getByRole('button', { name: '保存知识', exact: true }).click(); expect((await editedRule).status()).toBe(200);
+  await expect(page.getByRole('button', { name: '编辑知识', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: '← 知识列表', exact: true }).click();
+  await page.getByLabel('知识类型', { exact: true }).selectOption('standard');
+  await page.getByRole('link', { name: rule.content + '（已编辑）', exact: true }).click();
+  await page.getByRole('button', { name: '删除知识', exact: true }).click();
+  await page.getByRole('button', { name: '确认删除', exact: true }).click();
+  await expect(page).toHaveURL(/\/knowledge$/);
+  expect((await page.request.get(`/api/knowledge/${rule.id}`)).status()).toBe(404);
+  await expect(page.getByRole('link', { name: rule.content + '（已编辑）', exact: true })).toHaveCount(0);
+
+  await page.goto('/runbooks'); await page.getByRole('link', { name: '新建手册', exact: true }).click();
+  const fields = {
+    '手册标识': 'browser-payment-guide', '手册说明': '浏览器验收支付诊断', '手册来源': '本机复盘经验',
+    '适用条件 1 值': 'payment-service', '诊断 1 说明': '读取服务上下文', '诊断 1 Tool 名称': 'get_service_context',
+    '诊断 1 参数（JSON 对象）': '{"service_name":"payment-service"}', '处理 1 说明': '审批后评估回滚',
+    '回滚方案': '保留原版本，异常转人工', '验证方式（每行一条）': '验证 Deployment 与 Pod\n独立验证 5xx 与 P99',
+  };
+  for (const [label, value] of Object.entries(fields)) await page.getByLabel(label, { exact: true }).fill(value);
+  await page.getByRole('button', { name: '添加排除条件', exact: true }).click();
+  await page.getByLabel('排除条件 1 字段', { exact: true }).selectOption('title');
+  await page.getByLabel('排除条件 1 匹配方式', { exact: true }).selectOption('contains');
+  await page.getByLabel('排除条件 1 值', { exact: true }).fill('维护窗口');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: '../.cache/frontend-smoke/cognition-form-mobile.png', fullPage: true, animations: 'disabled' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  const createdGuide = page.waitForResponse((response) => response.request().method() === 'POST' && response.url().endsWith('/api/runbooks'));
+  await page.getByRole('button', { name: '保存手册', exact: true }).click();
+  const guideResponse = await createdGuide; expect(guideResponse.status()).toBe(201);
+  const guide: RunbookView = await guideResponse.json(); expect(guide.maturity).toBe('draft'); expect(guide.risk_level).toBe('L3');
+  await expect(page).toHaveURL(new RegExp(`/runbooks/${guide.id}$`));
+  await page.reload(); await expect(page.getByText('任务标题 包含 维护窗口', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '编辑手册', exact: true }).click();
+  await page.getByLabel('手册说明', { exact: true }).fill('已编辑支付诊断');
+  const editedGuide = page.waitForResponse((response) => response.request().method() === 'PUT');
+  await page.getByRole('button', { name: '保存手册', exact: true }).click();
+  const update = await editedGuide; expect(update.status()).toBe(200); expect((await update.json()).content_version).toBe(2);
+  await expect(page.getByText('已编辑支付诊断', { exact: true })).toBeVisible();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: '../.cache/frontend-smoke/cognition-runbook.png', fullPage: true, animations: 'disabled' });
+  await page.getByRole('link', { name: '← 手册列表', exact: true }).click();
+  await page.getByLabel('手册成熟度', { exact: true }).selectOption('draft');
+  await expect(page.getByText('已编辑支付诊断', { exact: true })).toBeVisible();
+  await page.screenshot({ path: '../.cache/frontend-smoke/cognition-runbooks.png', fullPage: true, animations: 'disabled' });
+  await page.getByRole('link', { name: guide.name, exact: true }).click();
+  await page.getByRole('button', { name: '删除手册', exact: true }).click();
+  await page.getByRole('button', { name: '确认删除', exact: true }).click();
+  await expect(page).toHaveURL(/\/runbooks$/);
+  expect((await page.request.get(`/api/runbooks/${guide.id}`)).status()).toBe(404);
+  await expect(page.getByRole('link', { name: guide.name, exact: true })).toHaveCount(0);
+  expect(writes).toHaveLength(6);
+  expect(writes.every((call) => /^(POST|PUT|DELETE) \/api\/(runbooks|knowledge)(\/|$)/.test(call))).toBe(true);
+  expect(remote).toEqual([]); expect(errors).toEqual([]);
+});

@@ -1,0 +1,115 @@
+# 本地开发依赖；仅发布到回环地址，密码由进程环境变量提供。
+name: weipai-ai-ops-brain-local
+
+x-temporal-database: &temporal-database
+  DB: postgres12
+  DB_PORT: "5432"
+  POSTGRES_SEEDS: postgres
+  POSTGRES_USER: ${POSTGRES_USER:-weipai}
+  POSTGRES_PWD: ${POSTGRES_PASSWORD:?请先设置本地 POSTGRES_PASSWORD 环境变量}
+  DBNAME: temporal
+  VISIBILITY_DBNAME: temporal_visibility
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg16-bookworm
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-weipai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请先设置本地 POSTGRES_PASSWORD 环境变量}
+      POSTGRES_DB: weipai
+      TZ: UTC
+      PGTZ: UTC
+    command: ["postgres", "-c", "timezone=UTC"]
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d weipai"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    networks: [local]
+
+  temporal-schema:
+    image: temporalio/admin-tools:1.31.0
+    environment:
+      <<: *temporal-database
+      SQL_PASSWORD: ${POSTGRES_PASSWORD:?请先设置本地 POSTGRES_PASSWORD 环境变量}
+    entrypoint: ["/bin/sh", "/scripts/setup-schema.sh"]
+    volumes:
+      - ./temporal/setup-schema.sh:/scripts/setup-schema.sh:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    networks: [local]
+
+  temporal:
+    image: temporalio/server:1.31.0
+    environment:
+      <<: *temporal-database
+      BIND_ON_IP: 0.0.0.0
+      # 本地使用默认动态配置；官方 server 镜像不再内置旧 docker.yaml。
+      DYNAMIC_CONFIG_FILE_PATH: /dev/null
+      TZ: UTC
+    ports:
+      - "127.0.0.1:${TEMPORAL_PORT:-7233}:7233"
+    depends_on:
+      temporal-schema:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "7233"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 15s
+    networks: [local]
+
+  temporal-admin:
+    image: temporalio/admin-tools:1.31.0
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+    entrypoint: ["/bin/sh", "/scripts/setup-namespace.sh"]
+    volumes:
+      - ./temporal/setup-namespace.sh:/scripts/setup-namespace.sh:ro
+    depends_on:
+      temporal:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - temporal operator cluster health --address temporal:7233 && temporal operator namespace describe --address temporal:7233 --namespace default > /dev/null
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+    networks: [local]
+
+  temporal-ui:
+    image: temporalio/ui:2.49.1
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:${TEMPORAL_UI_PORT:-8080},http://127.0.0.1:${TEMPORAL_UI_PORT:-8080}
+      TZ: UTC
+    ports:
+      - "127.0.0.1:${TEMPORAL_UI_PORT:-8080}:8080"
+    depends_on:
+      temporal-admin:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    networks: [local]
+
+networks:
+  local:
+    driver: bridge
+
+volumes:
+  postgres-data:

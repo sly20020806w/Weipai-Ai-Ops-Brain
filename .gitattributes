@@ -1,0 +1,10 @@
+# Linux 容器中的脚本与初始化文件固定使用 LF。
+*.sh text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.Dockerfile text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.lock text eol=lf

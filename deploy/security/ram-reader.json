@@ -1,0 +1,25 @@
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "NotAction": [
+        "ecs:DescribeInstances", "rds:DescribeDBInstanceAttribute", "rds:DescribeDBInstancePerformance",
+        "kvstore:DescribeInstanceAttribute", "mq:QueryInstanceBaseInfo", "mq:ListTopic",
+        "slb:DescribeLoadBalancerAttribute", "vpc:DescribeVpcAttribute", "alidns:DescribeDomainInfo",
+        "cdn:DescribeCdnDomainDetail", "cms:DescribeSystemEventAttribute", "log:GetLogStoreLogs",
+        "arms:SearchTracesByPage", "arms:GetTrace"
+      ],
+      "Resource": "*"
+    },
+    {"Effect": "Allow", "Action": ["ecs:DescribeInstances"], "Resource": ["${ECS_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["rds:DescribeDBInstanceAttribute", "rds:DescribeDBInstancePerformance"], "Resource": ["${RDS_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["kvstore:DescribeInstanceAttribute"], "Resource": ["${REDIS_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["mq:QueryInstanceBaseInfo", "mq:ListTopic"], "Resource": ["${MQ_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["slb:DescribeLoadBalancerAttribute"], "Resource": ["${SLB_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["vpc:DescribeVpcAttribute"], "Resource": ["${VPC_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["cdn:DescribeCdnDomainDetail"], "Resource": ["${CDN_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["log:GetLogStoreLogs"], "Resource": ["${LOG_RESOURCE}"]},
+    {"Effect": "Allow", "Action": ["alidns:DescribeDomainInfo", "cms:DescribeSystemEventAttribute", "arms:SearchTracesByPage", "arms:GetTrace"], "Resource": "*"}
+  ]
+}

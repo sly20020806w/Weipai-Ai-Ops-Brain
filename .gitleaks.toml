@@ -1,0 +1,10 @@
+title = "Weipai 源码与 Git 历史密钥扫描"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "本机工具、依赖、缓存与构建产物；源码、文档和锁文件仍扫描"
+paths = [
+  '''(^|[\\/])(\.git|\.tools|\.cache|\.venv|node_modules|__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|dist|build|coverage|test-results|playwright-report)([\\/]|$)''',
+]

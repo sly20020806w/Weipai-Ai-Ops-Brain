@@ -1,0 +1,41 @@
+name: Checks and images
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Python and uv
+        uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: '0.12.23'
+          python-version: '3.12'
+          enable-cache: false
+      - name: Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Install locked dependencies
+        run: |
+          npm install --global pnpm@11.25.0
+          uv sync --locked --directory backend
+          pnpm --dir frontend install --frozen-lockfile
+      - name: Unified checks and image smoke checks
+        run: uv run --locked --directory backend python ../scripts/ci.py

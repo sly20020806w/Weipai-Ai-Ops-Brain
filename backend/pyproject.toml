@@ -1,0 +1,52 @@
+[project]
+name = "weipai-ai-ops-brain"
+version = "0.1.0"
+description = "微派 AI 业务运维平台的模块化单体后端"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.16,<2",
+    "asyncpg>=0.30,<1",
+    "fastapi>=0.142.2",
+    "httpx2>=2.13.1,<3",
+    "pgvector>=0.4.1,<0.5",
+    "pydantic-settings>=2.15.0",
+    "sqlalchemy[asyncio]>=2.0,<2.1",
+    "temporalio>=1.18,<2",
+    "uvicorn>=0.54.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+api = "app.api.main:main"
+worker = "app.tasks.worker:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.0,<2",
+    "ruff>=0.16.10",
+]

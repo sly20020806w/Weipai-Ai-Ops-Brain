@@ -1,0 +1,26 @@
+# 本地配置、凭证与工具不得进入版本控制。
+.env
+.env.*
+.venv/
+.tools/
+.cache/
+
+# Python 构建产物与检查缓存。
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+
+# 前端依赖及本机文件。
+node_modules/
+coverage/
+test-results/
+playwright-report/
+.DS_Store
+Thumbs.db
