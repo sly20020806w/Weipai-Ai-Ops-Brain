@@ -42,6 +42,8 @@ def check_git_hygiene(root: Path) -> None:
 def main() -> None:
     root = Path(__file__).resolve().parents[1]
     backend = root / "backend"
+    # 全新检出的 runner 尚无缓存；pytest 的 basetemp 不会创建父目录。
+    (root / ".cache").mkdir(parents=True, exist_ok=True)
     commands = [
         ["app.connectors.boundaries", "--root", str(root)],
         [
