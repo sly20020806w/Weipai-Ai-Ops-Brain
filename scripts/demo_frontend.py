@@ -303,7 +303,7 @@ async def run_browser(
                 env=environment,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             )
         )
         await ready(processes[0], api_origin + "/health")
@@ -320,7 +320,7 @@ async def run_browser(
                 env=dict(os.environ, WEIPAI_API_TARGET=api_origin),
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             )
         )
         await ready(processes[1], frontend_origin)

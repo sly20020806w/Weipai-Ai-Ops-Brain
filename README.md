@@ -17,7 +17,7 @@ RCA/Reviewer、L3 审批 API、Fake 回滚、独立验证、十三章复盘与 D
 前端亲自浏览方式保留在各页面验收文档；固定端口 API/前端启动见 [前端外壳验收](docs/frontend-shell.md)。
 
 本仓库依据 `AGENTS.md`、`SPEC.md`、长版《Weipai AI Ops Brain 最终设计方案 V1.0》和 `plans.md` 开发。
-当前进度以 `plans.md` 为准；本次范围仅为 Step 56，远端 CI 验收需要提供目标仓库。
+当前进度以 `plans.md` 为准；本次范围仅为 Step 56，目标仓库为 [sly20020806w/Weipai-Ai-Ops-Brain](https://github.com/sly20020806w/Weipai-Ai-Ops-Brain)，分支为 `main`。
 
 ## 当前目录
 

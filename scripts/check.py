@@ -114,8 +114,12 @@ def main() -> None:
         ],
     ]
     for command in commands:
-        print(f"运行：{' '.join(command)}", flush=True)
-        subprocess.run([sys.executable, "-m", *command], cwd=backend, check=True)
+        # 本机也检查 CI 的 Linux 分支，避免只在推送后发现平台类型错误。
+        platforms = ("win32", "linux") if command[0] == "mypy" else (None,)
+        for platform in platforms:
+            arguments = command + (["--platform", platform] if platform else [])
+            print(f"运行：{' '.join(arguments)}", flush=True)
+            subprocess.run([sys.executable, "-m", *arguments], cwd=backend, check=True)
     check_git_hygiene(root)
     subprocess.run(
         [sys.executable, str(root / "scripts" / "security_checks.py")],
@@ -139,8 +143,8 @@ def main() -> None:
             cwd=backend,
             check=True,
         )
-        for command in ("api:check", "lint", "typecheck", "test", "build"):
-            subprocess.run(["pnpm", "run", command], cwd=root / "frontend", check=True)
+        for frontend_command in ("api:check", "lint", "typecheck", "test", "build"):
+            subprocess.run(["pnpm", "run", frontend_command], cwd=root / "frontend", check=True)
     print("统一检查全部通过", flush=True)
 
 

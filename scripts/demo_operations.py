@@ -76,7 +76,7 @@ async def run_demo(url: URL, *, interactive: bool = False) -> None:
             ),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
         opener = build_opener(ProxyHandler({}), HTTPCookieProcessor(CookieJar()))
 

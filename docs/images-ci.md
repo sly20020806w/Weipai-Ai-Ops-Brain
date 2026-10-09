@@ -49,7 +49,7 @@ Worker 保留现有 `local/test + Fake + localhost` 门禁。验收通过同一�
 
 ## CI
 
-尚未指定平台时，交付 GitHub Actions 文件 `.github/workflows/ci.yml`。push、pull_request、手动触发均运行；token 仅有 contents:read，Action 固定提交 SHA，Checkout 不持久化凭证，不推送镜像或部署生产。
+使用 GitHub Actions 文件 `.github/workflows/ci.yml`，目标仓库为 [sly20020806w/Weipai-Ai-Ops-Brain](https://github.com/sly20020806w/Weipai-Ai-Ops-Brain)，分支为 `main`。push、pull_request、手动触发均运行；token 仅有 contents:read，Action 固定提交 SHA，Checkout 不持久化凭证，不推送镜像或部署生产。
 
 Ubuntu 24.04 runner 准备 Python 3.12、uv 0.12.23、Node 24、pnpm 11.25.0，按两个锁文件安装依赖，然后执行：
 
@@ -61,7 +61,7 @@ ci.py 只允许本机 Docker，在任何创建前拒绝已有本项目容器/卷
 
 Linux CI 使用固定官方 Gitleaks 8.30.1 / OSV-Scanner 2.6.0，下载和缓存均验证 SHA256；Gitleaks 只读取指定普通二进制文件，避免压缩包路径写入；损坏缓存或未验证平台直接失败。Windows 保留现有安装器。公共漏洞扫描只发送锁文件包名/版本，不上传源码或应用凭证。
 
-推送验收需要目标 Git 仓库与可用 CI。当前没有远端或 HEAD，全部项目文件未跟踪；本次不擅自创建远端或推送公司源码。提供目标仓库和 CI 平台后，需要确认 `Checks and images / check-and-build` 实际运行通过。远端验收保持待完成，不把本机结果当作远端 CI 结果。
+远端验收进入仓库的 [Actions 页面](https://github.com/sly20020806w/Weipai-Ai-Ops-Brain/actions)，找到本次 `main` 提交对应的 `Checks and images`。确认 `check-and-build` 结果为成功，且 `Unified checks and image smoke checks` 日志末尾包含“统一检查全部通过”“镜像验收全部通过”“CI 统一检查与镜像验收全部通过”。该日志同时包含九项零跳过 Fake E2E、前端检查和实际镜像构建/启动检查；不能只依据 workflow 文件存在或依赖安装成功判定完成。
 
 参考：[uv Docker](https://docs.astral.sh/uv/guides/integration/docker/)、[pnpm Docker](https://pnpm.io/docker)、[GitHub Actions 工作流语法](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)。
 
