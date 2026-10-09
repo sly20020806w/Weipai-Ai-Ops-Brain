@@ -1,6 +1,6 @@
 # Weipai AI Ops Brain
 
-Step 56 镜像验收入口为 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\check-images.ps1`。
+Step 56 已完成，镜像与实际 GitHub Actions 验收通过。镜像验收入口为 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\check-images.ps1`。
 同一后端镜像提供 api/worker 两入口，另有前端镜像和 CI；手动浏览加 `-SkipBuild -Interactive`。
 操作命令、预期结果与远端 CI 验收条件见 [Step 56 镜像与 CI](docs/images-ci.md)。
 

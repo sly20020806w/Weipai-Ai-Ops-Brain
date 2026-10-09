@@ -74,4 +74,21 @@ Linux CI 使用固定官方 Gitleaks 8.30.1 / OSV-Scanner 2.6.0，下载和缓�
 - Actionlint 1.7.12 通过。CI 专用入口在已有个人项目容器时实际拒绝执行，compose 显式禁用 `.env` 自动读取的配置验证通过；没有运行远端 CI。
 - 初次构建/扫描/E2E 同时运行出现本机内存不足，导致文件读取和基础设施超时；限定本次构建资源、分开执行后完整复跑通过。失败 E2E 临时库及两个精确识别的隔离 Workflow 已清理，没有改动其他项目容器。额外修复 Cookie 头大小写、未创建 Schedule 的清理判定；扫描器退出 0 但存在文件读取错误时现在强制失败。
 - 本步没有新增应用依赖、迁移、生产请求或运维动作，应用库仍为 0016_catalog_audit。Step 57–58 未启动。
-- plans.md 将 Step 56 记为进行中：**本地实现与自检完成，远端 CI 待验收**。目标仓库/CI 平台未提供前，不声明整个步骤已完成。
+- 此前本地验收尚无远端；后续远端验收结果见下一节，当前 plans.md 的 Step 56 已完成。
+
+## 2026-10-09 远端验收与本次自检
+
+用户指定仓库为 `sly20020806w/Weipai-Ai-Ops-Brain`，目标分支 `main`。已通过连接的 GitHub 应用上传原有项目和本步文件，`origin` 与本地 `main` 已同步。上传前扫描当前文件；首次上传及后续修改均逐次核对远端 Git tree 与本地暂存 tree，`.env`、`.venv`、工具、缓存及依赖目录未被跟踪。
+
+实际成功运行：[Checks and images #3](https://github.com/sly20020806w/Weipai-Ai-Ops-Brain/actions/runs/37878748303)，代码提交 `a9ff285b37d1e4ced161450b518137bd5a9b5aa3`，北京时间 2026-10-09 11:24 完成主要验收。日志确认：
+
+- Connector 边界、ruff/格式、Windows/Linux 双平台 mypy（478 个源文件）全部通过；后端 `2297 passed / 590 skipped`。590 项既有数据库/Temporal 专项仍沿用原独立入口，本次没有全量复跑。
+- 全 Fake E2E `9 passed`、零跳过，实际运维 HTTP 与外网尝试为 0；前端 OpenAPI/16 个生成文件一致、lint/typecheck、132 项组件测试及生产构建通过。
+- Linux 官方扫描器 SHA256 验证通过；46 个 Python 和 420 个 npm 包完整扫描，漏洞 0、密钥命中 0、Git 历史扫描已执行。
+- 两个镜像实际构建成功；同一后端镜像 `/health` 为 HTTP 200/status=ok、Worker 连接 Temporal 并轮询独立队列；前端健康、SPA/资源 404、登录/CSRF/退出和四项负向启动检查通过。runner 最后清理本次容器、网络和卷。
+
+首次真实 CI 暴露 Linux mypy 的循环变量复用和 Windows 常量引用问题，第二次暴露全新检出没有 `.cache` 父目录的问题，均已修复后重跑。统一入口现在检查 Windows/Linux 两个平台；新增两个无缓存启动回归场景，断言 pytest 开始前临时目录的父目录已准备、两个平台的 mypy 都运行。另修复三处末尾空行，最终 Git 空白检查通过。未改业务模块、权限、配置来源、真实 Connector 门禁或后续步骤。
+
+本机再次执行 `check.ps1` 全部通过，新增两项入口回归另行通过。镜像再次构建/启动验收报告为 `.cache/images/6a692686e231487e8c82b6090c202c9a/report.json`；包含 Git 历史的安全复扫报告为 `.cache/security/ccf716597857425ca7df632f5deef6f0/`，密钥和漏洞均为 0。四个本机依赖 healthy，临时镜像/数据库/Schedule 已清理，临时测试库 0。亲自操作仍使用本文开头的三条验收命令。
+
+本次只完成 Step 56，Step 57–58 未开始。
