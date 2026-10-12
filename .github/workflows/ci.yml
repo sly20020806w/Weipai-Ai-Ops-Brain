@@ -46,4 +46,5 @@ jobs:
           echo 'a7f81ce08007091b86d8bd696eb4d86b8d0f2e1b9f6c714be62f82f96a594496  /tmp/helm.tar.gz' | sha256sum --check
           tar -xzf /tmp/helm.tar.gz -C /tmp
           install /tmp/linux-amd64/helm /usr/local/bin/helm
+          helm repo add temporal https://go.temporal.io/helm-charts
           uv run --locked --directory backend python ../scripts/check_helm.py
