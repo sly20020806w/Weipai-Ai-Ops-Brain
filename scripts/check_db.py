@@ -67,6 +67,9 @@ def main() -> None:
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--workflow", action="store_true")
     modes.add_argument("--discovery", action="store_true")
+    modes.add_argument("--ack", action="store_true")
+    modes.add_argument("--shadow", action="store_true")
+    modes.add_argument("--full", action="store_true")
     modes.add_argument("--timeline", action="store_true")
     modes.add_argument("--knowledge", action="store_true")
     modes.add_argument("--knowledge-demo", action="store_true")
@@ -132,6 +135,7 @@ def main() -> None:
     parser.add_argument("--interactive", action="store_true")
     options = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    (root / ".cache").mkdir(parents=True, exist_ok=True)
     container_ids = docker(
         "ps",
         "--quiet",
@@ -465,7 +469,7 @@ def main() -> None:
             )
             asyncio.run(detection_demo(url))
             return
-        if options.schedules:
+        if options.schedules or options.full:
             environment["TEST_TIME_SKIPPING_SERVER"] = asyncio.run(
                 prepare_time_skipping_server(root)
             )
@@ -642,8 +646,15 @@ def main() -> None:
             tests = ["tests/test_releases.py", "tests/test_releases_integration.py"]
         if options.inspections:
             tests = ["tests/test_inspection.py", "tests/test_inspection_integration.py"]
+        if options.ack:
+            tests = ["tests/test_readonly.py", "tests/test_readonly_integration.py"]
+        if options.shadow:
+            tests = ["tests/test_acceptance.py", "tests/test_shadow_integration.py"]
         if (
             options.workflow
+            or options.ack
+            or options.shadow
+            or options.full
             or options.discovery
             or options.timeline
             or options.events
@@ -676,6 +687,18 @@ def main() -> None:
                 raise ValueError("请用专项验收脚本设置本地 Temporal 测试地址")
         e2e_report = root / ".cache" / "e2e" / f"{uuid4().hex}.xml"
         extra_arguments = ["-s", "--junitxml", str(e2e_report)] if options.e2e else []
+        if options.ack:
+            extra_arguments = [
+                "-s",
+                "--basetemp",
+                str(root / ".cache/pytest-ack"),
+                "--junitxml",
+                str(e2e_report),
+            ]
+        if options.shadow:
+            extra_arguments = ["-s", "--junitxml", str(e2e_report)]
+        if options.full:
+            extra_arguments = ["--junitxml", str(e2e_report)]
         subprocess.run(
             [
                 sys.executable,
@@ -698,13 +721,41 @@ def main() -> None:
                 for kind in ("skipped", "failure", "error")
             ):
                 raise RuntimeError("Step 54 必须实际通过全部 9 项验收，不允许跳过")
+        if options.ack:
+            cases = ET.parse(e2e_report).findall(".//testcase")
+            if len(cases) != 39 or any(
+                case.find(kind) is not None
+                for case in cases
+                for kind in ("skipped", "failure", "error")
+            ):
+                raise RuntimeError("Step 57 本地专项必须实际通过全部 39 项，不允许跳过")
+        if options.shadow:
+            cases = ET.parse(e2e_report).findall(".//testcase")
+            if len(cases) != 15 or any(
+                case.find(kind) is not None
+                for case in cases
+                for kind in ("skipped", "failure", "error")
+            ):
+                raise RuntimeError("Step 58 本地影子专项必须实际通过全部 15 项，不允许跳过")
+        if options.full:
+            cases = ET.parse(e2e_report).findall(".//testcase")
+            if len(cases) < 580 or any(
+                case.find(kind) is not None
+                for case in cases
+                for kind in ("skipped", "failure", "error")
+            ):
+                raise RuntimeError("最终数据库回归必须覆盖全部既有场景，且零跳过")
         if options.knowledge:
             asyncio.run(knowledge_demo(url))
     finally:
         sql(f'DROP DATABASE "{database_name}" WITH (FORCE)')
         print("临时测试库已清理", flush=True)
     print(
-        "Step 54 端到端闭环验收全部通过（9 项，零跳过）"
+        "Step 58 本地影子验收通过（15 项，零跳过；真实影子运行仍待验收）"
+        if options.shadow
+        else "Step 57 本地准备验收通过（39 项，零跳过；真实 ACK 上线仍待验收）"
+        if options.ack
+        else "Step 54 端到端闭环验收全部通过（9 项，零跳过）"
         if options.e2e
         else "Step 46 AI Chat API 验收全部通过"
         if options.chat

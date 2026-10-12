@@ -1,4 +1,4 @@
-"""与 API 共用后端包的第二入口；Step 17 仅注册本地占位实现。"""
+"""同一后端镜像的 Worker 入口；本地 Fake 闭环与云端只读发现分别校验。"""
 
 import asyncio
 from datetime import timedelta
@@ -226,6 +226,33 @@ def configured_workflow_input(
 
 
 async def run_worker(settings: Settings) -> None:
+    if settings.worker_mode == "readonly_discovery":
+        from app.tasks.readonly import (
+            READY_PATH,
+            create_readonly_worker,
+            validate_readonly_settings,
+        )
+
+        validate_readonly_settings(settings)
+        database = Database(settings.require_database_url())
+        READY_PATH.unlink(missing_ok=True)
+        try:
+            client = await Client.connect(
+                settings.temporal_config.address, namespace=settings.temporal_config.namespace
+            )
+            worker = create_readonly_worker(client, database, settings)
+            # Worker 已开始轮询后才置 Ready；异常退出立即移除。
+            async with worker:
+                await ensure_discovery_schedule(
+                    client, settings.discovery_config, settings.temporal_config.task_queue
+                )
+                READY_PATH.touch()
+                print("只读 Discovery Worker 已启动；Executor 未注册", flush=True)
+                await asyncio.Event().wait()
+        finally:
+            READY_PATH.unlink(missing_ok=True)
+            await database.dispose()
+        return
     validate_placeholder_settings(settings)
     database = Database(settings.require_database_url())
     try:

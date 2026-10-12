@@ -4,6 +4,10 @@
 .venv/
 .tools/
 .cache/
+# Helm 依赖由 Chart.lock 重建；个人 ACK 参数与 kubeconfig 不入库。
+deploy/helm/**/charts/
+*.local.yaml
+*.kubeconfig
 
 # Python 构建产物与检查缓存。
 __pycache__/

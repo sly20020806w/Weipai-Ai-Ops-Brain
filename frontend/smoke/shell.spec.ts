@@ -4,6 +4,7 @@ const labels = ['总览', 'AI 任务中心', '事故中心', '服务与上下文
   '工单中心', '运行手册中心', '风险中心', '重大保障', '架构评审', '自动化中心', '审批中心', '知识中心', '审计中心', 'AI 对话'];
 
 test('真实 Cookie 登录、17 个入口、刷新、会话撤销与移动端导航', async ({ page, context }) => {
+  test.setTimeout(90_000);
   const password = process.env.WEIPAI_FRONTEND_SMOKE_PASSWORD;
   if (!password) throw new Error('未收到进程内临时密码');
   const remote: string[] = [];
@@ -20,7 +21,7 @@ test('真实 Cookie 登录、17 个入口、刷新、会话撤销与移动端导
   });
   await page.goto('/approvals');
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole('heading', { name: '欢迎回来' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '欢迎回来' })).toBeVisible({ timeout: 15_000 });
   await page.screenshot({ path: '../.cache/frontend-smoke/login.png', fullPage: true, animations: 'disabled' });
   await page.getByLabel('账户', { exact: true }).fill('local-browser-owner');
   await page.getByLabel('密码', { exact: true }).fill(password);

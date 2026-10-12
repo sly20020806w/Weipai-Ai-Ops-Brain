@@ -32,14 +32,31 @@ test('真实 API 服务图、Runbook/Knowledge 增删改持久化与手机布局
   await expect(page.getByRole('tooltip')).toContainText('新鲜度');
   await edge.press('Enter'); await expect(page.getByText('关系详情', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '刷新关系图', exact: true }).focus();
-  await edge.scrollIntoViewIfNeeded();
-  const midpoint = await edge.locator('path').first().evaluate((element) => {
+  await expect(page.getByRole('tooltip')).not.toBeVisible();
+  // UUID 排序的第一条边可能穿过其他节点；鼠标检查选择支付到数据库的真实关系。
+  const hoverItem = graph.edges.find((item) => item.relation === 'calls'
+    && graph.nodes.find((node) => node.id === item.from_node_id)?.external_id === 'payment-service'
+    && graph.nodes.find((node) => node.id === item.to_node_id)?.name === 'payment-db');
+  if (!hoverItem) throw new Error('缺少支付到数据库的关系');
+  const hoverFrom = graph.nodes.find((node) => node.id === hoverItem.from_node_id)!.name;
+  const hoverTo = graph.nodes.find((node) => node.id === hoverItem.to_node_id)!.name;
+  const hoverEdge = page.getByRole('button', { name: `关系 ${hoverFrom} → ${hoverTo} · ${hoverItem.relation} · ${hoverItem.source}`, exact: true });
+  await hoverEdge.scrollIntoViewIfNeeded();
+  const hoverPoint = await hoverEdge.locator('path').first().evaluate((element) => {
     const path = element as SVGPathElement;
-    const point = path.getPointAtLength(path.getTotalLength() / 2);
-    const screen = point.matrixTransform(path.getScreenCTM()!);
-    return { x: screen.x, y: screen.y };
+    for (let sample = 1; sample < 40; sample++) {
+      const point = path.getPointAtLength(path.getTotalLength() * sample / 40);
+      const screen = point.matrixTransform(path.getScreenCTM()!);
+      if (document.elementFromPoint(screen.x, screen.y)?.closest('.graph-edge') === path.closest('.graph-edge')) {
+        return { x: screen.x, y: screen.y };
+      }
+    }
+    return null;
   });
-  await page.mouse.move(midpoint.x, midpoint.y);
+  if (!hoverPoint) throw new Error('关系边没有可命中的鼠标悬停位置');
+  await page.mouse.move(0, 0);
+  await page.mouse.move(hoverPoint.x, hoverPoint.y);
+  await expect(page.getByRole('tooltip')).toContainText(hoverItem.source);
   await expect(page.getByRole('tooltip')).toContainText('来源');
   await expect(page.getByRole('tooltip')).toContainText('新鲜度');
   await page.locator('.graph-relations button').first().click();

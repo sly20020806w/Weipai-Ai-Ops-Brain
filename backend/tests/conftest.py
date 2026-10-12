@@ -12,6 +12,10 @@ import pytest_asyncio
 def isolate_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     for name in (
         "APP_ENV",
+        "OPS_READ_ONLY",
+        "WORKER_MODE",
+        "KUBERNETES_READER_TOKEN_FILE",
+        "KUBERNETES_READER_CA_FILE",
         "AGENT_CONFIG",
         "CHAT_STREAM_TIMEOUT_SECONDS",
         "API_HOST",

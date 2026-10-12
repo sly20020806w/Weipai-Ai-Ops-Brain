@@ -97,6 +97,18 @@ def main() -> None:
             [sys.executable, str(ROOT / "scripts/check.py")], cwd=ROOT, env=environment, check=True
         )
         subprocess.run(
+            [sys.executable, str(ROOT / "scripts/check_db.py"), "--ack"],
+            cwd=ROOT,
+            env=environment,
+            check=True,
+        )
+        subprocess.run(
+            [sys.executable, str(ROOT / "scripts/check_shadow.py")],
+            cwd=ROOT,
+            env=environment,
+            check=True,
+        )
+        subprocess.run(
             [sys.executable, str(ROOT / "scripts/check_images.py")],
             cwd=ROOT,
             env=environment,

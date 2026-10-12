@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "weipai.name" . }}-migrate
+  labels:
+    {{- include "weipai.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        {{- include "weipai.labels" . | nindent 8 }}
+        app.kubernetes.io/component: migration
+    spec:
+      # pre-install 时应用 SA 尚未创建；默认 SA 显式禁用 token。
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{ toJson . }}
+      {{- end }}
+      containers:
+        - name: migrate
+          image: {{ .Values.images.backend | quote }}
+          command: [python, -m, alembic]
+          args: [upgrade, head]
+          securityContext:
+            {{- include "weipai.security" . | nindent 12 }}
+          resources: {{ .Values.resources.api | toJson }}
+          env:
+            - {name: APP_ENV, value: production}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: {{ .Values.databaseSecret | quote }}, key: DATABASE_URL}

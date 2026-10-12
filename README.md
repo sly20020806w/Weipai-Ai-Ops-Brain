@@ -1,5 +1,10 @@
 # Weipai AI Ops Brain
 
+Step 58 本地影子演练和平台最终验收已完成，入口为 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\check-final.ps1`。
+全部使用 Fake 运维来源与 LLM、真实本机 PostgreSQL/Temporal；报告保存在 `.cache/acceptance/latest.json`。
+只复检本步运行 `check-shadow.ps1`。亲自启动、浏览和检查的完整步骤见 [最终验收说明](docs/final-acceptance.md)。
+按用户要求，真实系统接入、ACK 上线、真实告警影子期和首个真实 L1 动作留至入职后；Step 57 已标记完成，真实上线待验证。
+
 Step 56 已完成，镜像与实际 GitHub Actions 验收通过。镜像验收入口为 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\check-images.ps1`。
 同一后端镜像提供 api/worker 两入口，另有前端镜像和 CI；手动浏览加 `-SkipBuild -Interactive`。
 操作命令、预期结果与远端 CI 验收条件见 [Step 56 镜像与 CI](docs/images-ci.md)。
@@ -17,7 +22,7 @@ RCA/Reviewer、L3 审批 API、Fake 回滚、独立验证、十三章复盘与 D
 前端亲自浏览方式保留在各页面验收文档；固定端口 API/前端启动见 [前端外壳验收](docs/frontend-shell.md)。
 
 本仓库依据 `AGENTS.md`、`SPEC.md`、长版《Weipai AI Ops Brain 最终设计方案 V1.0》和 `plans.md` 开发。
-当前进度以 `plans.md` 为准；本次范围仅为 Step 56，目标仓库为 [sly20020806w/Weipai-Ai-Ops-Brain](https://github.com/sly20020806w/Weipai-Ai-Ops-Brain)，分支为 `main`。
+当前进度以 `plans.md` 为准；本次范围为 Step 58 本地影子演练与最终验收，目标仓库为 [sly20020806w/Weipai-Ai-Ops-Brain](https://github.com/sly20020806w/Weipai-Ai-Ops-Brain)，分支为 `main`。
 
 ## 当前目录
 
@@ -1095,3 +1100,22 @@ if ($LASTEXITCODE -ne 0) { throw '聊天页面验收失败' }
 
 依赖启动、逐项操作、断流恢复与完整自检结果见 [Step 53 验收说明](docs/chat-page.md)。
 本步全部使用本机 Fake；本次只完成 Step 53。
+
+## 自行验收 Step 57：只读上线准备
+
+入职前尚无真实 ACK 和公司系统，本步先交付 Helm Chart、生产只读发现入口与本地验收。
+Step 57 已按用户确认标记完成；真实上线和真实 Discovery 服务图待入职后验证。
+
+启动本机依赖后执行：
+
+```powershell
+Set-Location 'F:\Weipai AI Ops Brain'
+powershell.exe -NoProfile -File .\check-ack.ps1
+if ($LASTEXITCODE -ne 0) { throw '只读上线本地准备验收失败' }
+powershell.exe -NoProfile -File .\check.ps1
+if ($LASTEXITCODE -ne 0) { throw '统一检查失败' }
+```
+
+预期 Helm lint 与只读资源检查通过、8 项无效参数被拒绝、39 项专项零跳过通过。
+专项只连接本机 PostgreSQL/Temporal，Fake Discovery 生成 25 个节点、31 条关系；真实运维与外网请求 0。
+完整运行边界、浏览器演示及入职后的参数/Secret/真实验收清单见 [Step 57 说明](docs/ack-readonly.md)。

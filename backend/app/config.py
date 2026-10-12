@@ -118,6 +118,16 @@ class Settings(BaseSettings):
         return value
 
     app_env: Literal["local", "test", "staging", "production"] = Field(validation_alias="APP_ENV")
+    read_only: bool = Field(default=False, validation_alias="OPS_READ_ONLY")
+    worker_mode: Literal["local", "readonly_discovery"] = Field(
+        default="local", validation_alias="WORKER_MODE"
+    )
+    kubernetes_reader_token_file: str | None = Field(
+        default=None, validation_alias="KUBERNETES_READER_TOKEN_FILE", repr=False
+    )
+    kubernetes_reader_ca_file: str | None = Field(
+        default=None, validation_alias="KUBERNETES_READER_CA_FILE", repr=False
+    )
     api_host: str = Field(default="127.0.0.1", validation_alias="API_HOST", min_length=1)
     api_port: int = Field(default=8000, validation_alias="API_PORT", ge=1, le=65535)
     auth_config: AuthConfig | None = Field(default=None, validation_alias="AUTH_CONFIG", repr=False)
@@ -263,6 +273,31 @@ class Settings(BaseSettings):
     def validate_gateway_mode(self) -> "Settings":
         if self.llm_mode == "gateway":
             self.require_gateway_config()
+        return self
+
+    @model_validator(mode="after")
+    def validate_readonly_boundary(self) -> "Settings":
+        if self.worker_mode == "readonly_discovery" and not self.read_only:
+            raise ValueError("readonly_discovery 要求 OPS_READ_ONLY=true")
+        if self.read_only:
+            if self.execution_config.enabled or self.execution_config.bindings:
+                raise ValueError("OPS_READ_ONLY 禁止启用 Executor 或配置执行目标")
+            if self.agent_config.enabled:
+                raise ValueError("首次只读上线仅开放 Discovery，AI 任务留至影子运行验收")
+            if self.feishu_notification_credentials is not None:
+                raise ValueError("首次只读上线禁止挂载通知写凭证")
+            # 宿主强制追加不可由环境规则放宽的写操作拒绝规则。
+            from app.policy.models import PolicyDecision, PolicyRule, RiskLevel
+
+            guard = PolicyRule(
+                id="readonly_guard",
+                risk_levels=tuple(level for level in RiskLevel if level is not RiskLevel.L0),
+                decision=PolicyDecision.DENY,
+                reason="首次只读上线禁止生产变更",
+            )
+            self.policy_config = PolicyConfig(
+                rules=tuple(r for r in self.policy_config.rules if r.id != guard.id) + (guard,)
+            )
         return self
 
     def require_gateway_config(self) -> GatewayConfig:

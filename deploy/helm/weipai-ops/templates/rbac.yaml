@@ -1,0 +1,65 @@
+{{- $root := . -}}
+{{- range $role := list "reader" "executor" "console" }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "weipai.name" $root }}-{{ $role }}
+  labels:
+    {{- include "weipai.labels" $root | nindent 4 }}
+automountServiceAccountToken: false
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "weipai.name" . }}-{{ .Release.Namespace }}-namespaces
+  labels:
+    {{- include "weipai.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: [namespaces]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "weipai.name" . }}-{{ .Release.Namespace }}-namespaces
+  labels:
+    {{- include "weipai.labels" . | nindent 4 }}
+subjects:
+  - {kind: ServiceAccount, name: {{ include "weipai.name" . }}-reader, namespace: {{ .Release.Namespace }}}
+roleRef:
+  {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: {{ include "weipai.name" . }}-{{ .Release.Namespace }}-namespaces}
+{{- range $namespace := .Values.targetNamespaces }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "weipai.name" $root }}-{{ $root.Release.Namespace }}-reader
+  namespace: {{ $namespace }}
+  labels:
+    {{- include "weipai.labels" $root | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "weipai.name" $root }}-{{ $root.Release.Namespace }}-reader
+  namespace: {{ $namespace }}
+  labels:
+    {{- include "weipai.labels" $root | nindent 4 }}
+subjects:
+  - {kind: ServiceAccount, name: {{ include "weipai.name" $root }}-reader, namespace: {{ $root.Release.Namespace }}}
+roleRef:
+  {apiGroup: rbac.authorization.k8s.io, kind: Role, name: {{ include "weipai.name" $root }}-{{ $root.Release.Namespace }}-reader}
+{{- end }}

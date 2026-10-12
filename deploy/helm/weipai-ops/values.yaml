@@ -1,0 +1,99 @@
+# 仅为无密钥的部署参数示例；registry.invalid 等占位值必须在真实上线前替换。
+images:
+  backend: registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000
+  frontend: registry.invalid/weipai/frontend@sha256:0000000000000000000000000000000000000000000000000000000000000000
+imagePullSecrets: []
+backendSecret: weipai-reader-runtime
+authSecret: weipai-console-auth
+databaseSecret: weipai-platform-database
+targetNamespaces: [weipai-observe]
+clusterName: ack-cluster
+publicHost: ops.example.invalid
+tlsSecret: weipai-console-tls
+ingressClassName: nginx
+ingressEnabled: false
+discovery:
+  scheduleId: weipai-discovery-readonly
+  intervalSeconds: 300
+  lookbackSeconds: 900
+temporalAddress: weipai-temporal-frontend:7233
+temporalNamespace: default
+taskQueue: weipai-readonly-discovery
+resources:
+  api:
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {cpu: "1", memory: 1Gi}
+  worker:
+    requests: {cpu: 200m, memory: 512Mi}
+    limits: {cpu: "2", memory: 2Gi}
+  frontend:
+    requests: {cpu: 50m, memory: 64Mi}
+    limits: {cpu: 500m, memory: 256Mi}
+# 固定官方 Temporal Chart；仅使用既有 PostgreSQL，不引入其他存储中间件。
+temporal:
+  enabled: true
+  fullnameOverride: weipai-temporal
+  serviceAccount:
+    # schema pre-install Job 必须使用安装前已存在、无业务系统权限的 SA。
+    create: false
+    name: default
+  server:
+    image: {repository: temporalio/server, tag: "1.31.0"}
+    replicaCount: 1
+    resources:
+      requests: {cpu: 100m, memory: 256Mi}
+      limits: {cpu: "1", memory: 1Gi}
+    frontend:
+      containerSecurityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+    history:
+      containerSecurityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+    matching:
+      containerSecurityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+    worker:
+      containerSecurityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+    config:
+      persistence:
+        numHistoryShards: 512
+        defaultStore: default
+        visibilityStore: visibility
+        datastores:
+          default:
+            sql:
+              pluginName: postgres12
+              databaseName: temporal
+              connectAddr: postgres.platform.svc:5432
+              connectProtocol: tcp
+              user: temporal
+              existingSecret: weipai-temporal-database
+              secretKey: password
+              createDatabase: false
+              manageSchema: true
+          visibility:
+            sql:
+              pluginName: postgres12
+              databaseName: temporal_visibility
+              connectAddr: postgres.platform.svc:5432
+              connectProtocol: tcp
+              user: temporal
+              existingSecret: weipai-temporal-database
+              secretKey: password
+              createDatabase: false
+              manageSchema: true
+      namespaces:
+        create: true
+        # 普通 Job 与应用一起启动，避免 --wait 等待 Worker 与 post-install 互锁。
+        useHelmHooks: false
+        namespace: [{name: default, retention: 7d}]
+  admintools:
+    enabled: false
+    image: {repository: temporalio/admin-tools, tag: "1.31.0"}
+  schema:
+    backoffLimit: 2
+    activeDeadlineSeconds: 600
+    resources:
+      requests: {cpu: 100m, memory: 128Mi}
+      limits: {cpu: "1", memory: 512Mi}
+    securityContext: {runAsNonRoot: true, runAsUser: 1000, runAsGroup: 1000}
+    containerSecurityContext: {allowPrivilegeEscalation: false, capabilities: {drop: [ALL]}}
+  web:
+    enabled: false

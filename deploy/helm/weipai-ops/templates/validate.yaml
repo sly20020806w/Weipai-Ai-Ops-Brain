@@ -1,0 +1,18 @@
+{{- if gt (len .Release.Name) 40 -}}
+{{- fail "release 名称最多 40 个字符，避免跨命名空间 RBAC 名称截断冲突" -}}
+{{- end -}}
+{{- if gt (len .Release.Namespace) 40 -}}
+{{- fail "部署命名空间最多 40 个字符" -}}
+{{- end -}}
+{{- if .Values.temporal.enabled -}}
+{{- if .Values.temporal.extraObjects -}}{{- fail "只读部署禁止 temporal.extraObjects" -}}{{- end -}}
+{{- range $name, $store := .Values.temporal.server.config.persistence.datastores -}}
+{{- if or (not $store.sql) $store.sql.password $store.sql.passwordCommand (not $store.sql.existingSecret) -}}
+{{- fail "Temporal 只允许 PostgreSQL SQL 存储与已有 Secret 引用" -}}
+{{- end -}}
+{{- if ne $store.sql.pluginName "postgres12" -}}{{- fail "Temporal 只允许 postgres12" -}}{{- end -}}
+{{- end -}}
+{{- if ne .Values.temporal.server.config.namespaces.useHelmHooks false -}}
+{{- fail "namespace Job 不得使用 post-install hook，避免 --wait 启动互锁" -}}
+{{- end -}}
+{{- end -}}

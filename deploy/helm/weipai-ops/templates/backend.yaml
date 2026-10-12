@@ -1,0 +1,100 @@
+{{- $root := . -}}
+{{- range $component := list "api" "worker" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "weipai.name" $root }}-{{ $component }}
+  labels:
+    {{- include "weipai.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ $component }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: {{ $root.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+  template:
+    metadata:
+      labels:
+        {{- include "weipai.labels" $root | nindent 8 }}
+        app.kubernetes.io/component: {{ $component }}
+    spec:
+      serviceAccountName: {{ include "weipai.name" $root }}-{{ if eq $component "worker" }}reader{{ else }}console{{ end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets: {{ toJson . }}
+      {{- end }}
+      containers:
+        - name: {{ $component }}
+          image: {{ $root.Values.images.backend | quote }}
+          args: [{{ $component }}]
+          securityContext:
+            {{- include "weipai.security" $root | nindent 12 }}
+          resources: {{ index $root.Values.resources $component | toJson }}
+          env:
+            {{- include "weipai.backendEnv" $root | nindent 12 }}
+            {{- if eq $component "worker" }}
+            - name: KUBERNETES_READER_TOKEN_FILE
+              value: /var/run/weipai-reader/token
+            - name: KUBERNETES_READER_CA_FILE
+              value: /var/run/weipai-reader/ca.crt
+            - name: KUBERNETES_CONFIG
+              value: {{ dict "cluster_name" $root.Values.clusterName "base_url" "https://kubernetes.default.svc" "namespace_allowlist" $root.Values.targetNamespaces | toJson | quote }}
+            - name: DISCOVERY_CONFIG
+              value: {{ dict "schedule_id" $root.Values.discovery.scheduleId "interval_seconds" $root.Values.discovery.intervalSeconds "lookback_seconds" $root.Values.discovery.lookbackSeconds | toJson | quote }}
+            {{- range $key := list "CONNECTOR_READER_TOKENS" "OPS_PLATFORM_CONFIG" "ARMS_CONFIG" "GIT_CONFIG" "CLOUD_CONFIG" }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef: {name: {{ $root.Values.backendSecret | quote }}, key: {{ $key }}}
+            {{- end }}
+          startupProbe:
+            exec: {command: [python, -c, "from pathlib import Path; raise SystemExit(not Path('/tmp/weipai-worker-ready').exists())"]}
+            periodSeconds: 5
+            failureThreshold: 120
+          readinessProbe:
+            exec: {command: [python, -c, "from pathlib import Path; raise SystemExit(not Path('/tmp/weipai-worker-ready').exists())"]}
+            periodSeconds: 10
+            {{- else }}
+            - name: AUTH_CONFIG
+              valueFrom:
+                secretKeyRef: {name: {{ $root.Values.authSecret | quote }}, key: AUTH_CONFIG}
+            - name: API_HOST
+              value: 0.0.0.0
+          ports: [{name: http, containerPort: 8000}]
+          startupProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 20}
+            {{- end }}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+            {{- if eq $component "worker" }}
+            - {name: reader, mountPath: /var/run/weipai-reader, readOnly: true}
+            {{- end }}
+      volumes:
+        - {name: tmp, emptyDir: {sizeLimit: 64Mi}}
+        {{- if eq $component "worker" }}
+        - name: reader
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken: {path: token, expirationSeconds: 3600}
+              - configMap:
+                  name: kube-root-ca.crt
+                  items: [{key: ca.crt, path: ca.crt}]
+        {{- end }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "weipai.name" . }}-api
+  labels:
+    {{- include "weipai.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: {{ .Release.Name }}, app.kubernetes.io/component: api}
+  ports: [{name: http, port: 8000, targetPort: http}]

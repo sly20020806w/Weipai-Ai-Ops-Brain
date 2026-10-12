@@ -277,9 +277,9 @@ async def test_complete_workflow_and_unsafe_branches(
 
     facts = InjectedFacts(abnormal_windows=frozenset({0, 1}) if case == "anomaly" else frozenset())
     activities = WarRoomActivities(database, settings, resources=resources, facts=facts)
-    receipt = await submit(database, value(service, live=True))
     client = await Client.connect(settings.temporal_config.address)
-    handle = client.get_workflow_handle_for(AITaskWorkflow.run, receipt.workflow_id)
+    receipt = None
+    handle = None
     try:
         async with create_worker(
             client,
@@ -288,6 +288,9 @@ async def test_complete_workflow_and_unsafe_branches(
             war_room_activities=activities,
             executor_activities=ExecutorActivities(database, settings, connector=resources),
         ):
+            # 活动的十秒业务期限从 Worker 就绪后开始，不能消耗在本机启动开销上。
+            receipt = await submit(database, value(service, live=True))
+            handle = client.get_workflow_handle_for(AITaskWorkflow.run, receipt.workflow_id)
             events = EventActivities(database, settings, client)
             await events.start_task(receipt)
             await events.start_task(receipt)
@@ -322,9 +325,10 @@ async def test_complete_workflow_and_unsafe_branches(
                 assert not any(h.to_status == TaskStatus.RESOLVED for h in history)
         await Replayer(workflows=[AITaskWorkflow]).replay_workflow(await handle.fetch_history())
     finally:
-        if (await handle.describe()).status == WorkflowExecutionStatus.RUNNING:
+        if handle and (await handle.describe()).status == WorkflowExecutionStatus.RUNNING:
             await handle.terminate("清理重大保障专项主任务")
-        await stop_anomalies(client, database, UUID(receipt.task_id))
+        if receipt:
+            await stop_anomalies(client, database, UUID(receipt.task_id))
 
 
 @local_temporal

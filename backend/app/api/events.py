@@ -47,9 +47,12 @@ SignedEvents = Annotated[list[NormalizedEvent], Depends(read_signed_events)]
 
 
 async def get_event_gateway(request: Request, events: SignedEvents) -> EventGateway | None:
+    settings: Settings = request.app.state.settings
+    if settings.read_only:
+        # SignedEvents 已验签；首次发现模式尚不消费 AI Task，不接受事件排队。
+        raise HTTPException(403, "首次只读上线尚未开放事件任务接入")
     if not events:
         return None
-    settings: Settings = request.app.state.settings
     if settings.database_url is None:
         raise HTTPException(503, "事件接入需要 DATABASE_URL")
     from app.tasks.worker import validate_placeholder_settings

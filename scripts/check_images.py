@@ -128,7 +128,12 @@ def project_container(service: str) -> dict[str, Any]:
 def wait_for(check: Callable[[], bool], label: str) -> None:
     deadline = time.monotonic() + 90
     while time.monotonic() < deadline:
-        if check():
+        try:
+            ready = check()
+        except subprocess.TimeoutExpired:
+            # Docker Desktop 的 exec/inspect 可能瞬时繁忙；仍受原有总期限约束。
+            ready = False
+        if ready:
             print(f"通过：{label}", flush=True)
             return
         time.sleep(1)

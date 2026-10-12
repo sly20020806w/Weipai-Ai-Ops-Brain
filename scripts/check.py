@@ -65,6 +65,9 @@ def main() -> None:
             "../scripts/security_tools.py",
             "../scripts/check_images.py",
             "../scripts/ci.py",
+            "../scripts/check_helm.py",
+            "../scripts/check_shadow.py",
+            "../scripts/check_final.py",
         ],
         [
             "ruff",
@@ -86,6 +89,9 @@ def main() -> None:
             "../scripts/security_tools.py",
             "../scripts/check_images.py",
             "../scripts/ci.py",
+            "../scripts/check_helm.py",
+            "../scripts/check_shadow.py",
+            "../scripts/check_final.py",
         ],
         [
             "mypy",
@@ -107,6 +113,9 @@ def main() -> None:
             "../scripts/security_tools.py",
             "../scripts/check_images.py",
             "../scripts/ci.py",
+            "../scripts/check_helm.py",
+            "../scripts/check_shadow.py",
+            "../scripts/check_final.py",
         ],
         [
             "pytest",

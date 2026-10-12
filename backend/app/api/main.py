@@ -20,6 +20,7 @@ from app.api.console import router as console_router
 from app.api.events import router as events_router
 from app.api.health import router
 from app.api.operations import router as operations_router
+from app.api.readonly import ReadOnlyMiddleware
 from app.config import Settings
 from app.db.session import Database
 from app.graph.service import GraphNodeNotFound
@@ -75,6 +76,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     application = AuthenticatedAPI(title="Weipai AI Ops Brain", version="0.1.0", lifespan=lifespan)
     application.state.settings = validated_settings
+    application.add_middleware(ReadOnlyMiddleware)
     application.add_middleware(SessionMiddleware)
     application.include_router(auth_router)
     application.include_router(router)
