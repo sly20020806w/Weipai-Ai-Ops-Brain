@@ -1,0 +1,4 @@
+{
+  "tests/test_ledger_integration.py::test_audit_four_types_reference_and_time_order": true,
+  "tests/test_architecture.py::test_invalid_input_and_extra_execution_parameters_rejected[service_name-bad/service]": true
+}

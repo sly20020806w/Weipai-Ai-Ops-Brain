@@ -1,0 +1,3 @@
+[console_scripts]
+api = app.api.main:main
+worker = app.tasks.worker:main

@@ -1,0 +1,186 @@
+构建：weipai-backend:step56
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from backend.Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 1.31kB 0.1s done
+#1 DONE 0.3s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 3.2s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.1s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#4 ...
+
+#5 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21
+#5 DONE 1.3s
+
+#4 [internal] load metadata for docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#4 DONE 1.3s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 643B 0.0s done
+#6 DONE 0.1s
+
+#7 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21
+#7 resolve ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21 0.1s done
+#7 DONE 0.1s
+
+#8 [internal] load build context
+#8 ...
+
+#9 [build 1/7] FROM docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#9 resolve docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 0.1s done
+#9 DONE 0.1s
+
+#8 [internal] load build context
+#8 transferring context: 1.93MB 0.3s done
+#8 DONE 0.3s
+
+#10 [runtime 4/7] COPY --from=build /app/.venv /app/.venv
+#10 CACHED
+
+#11 [build 7/7] RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-editable
+#11 CACHED
+
+#12 [runtime 6/7] COPY backend/alembic ./alembic
+#12 CACHED
+
+#13 [build 2/7] COPY --from=uv /uv /usr/local/bin/uv
+#13 CACHED
+
+#14 [build 6/7] COPY backend/app ./app
+#14 CACHED
+
+#15 [build 4/7] COPY backend/pyproject.toml backend/uv.lock backend/README.md ./
+#15 CACHED
+
+#16 [build 5/7] RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-install-project
+#16 CACHED
+
+#17 [build 3/7] WORKDIR /app
+#17 CACHED
+
+#18 [runtime 2/7] WORKDIR /app
+#18 CACHED
+
+#19 [runtime 3/7] RUN groupadd --gid 10001 weipai && useradd --uid 10001 --gid 10001 --no-create-home weipai
+#19 CACHED
+
+#20 [runtime 5/7] COPY backend/alembic.ini ./alembic.ini
+#20 CACHED
+
+#21 [runtime 7/7] COPY --chmod=0555 deploy/images/backend-entrypoint.sh ./entrypoint.sh
+#21 CACHED
+
+#22 exporting to image
+#22 exporting layers
+#22 exporting layers done
+#22 exporting manifest sha256:a1d3043e235515d206e3d186f2f9763c4ee955716709747e36bfb47a8a4bc3f0 done
+#22 exporting config sha256:74c05ff983c7d4240ec12951a828129a2cef8b9f5f18bf1055675f81255b601d done
+#22 exporting attestation manifest sha256:67d500a2361ee0a2a5abec21ab9a34692f6cfee64de0f85c0c14190f958da35d
+#22 exporting attestation manifest sha256:67d500a2361ee0a2a5abec21ab9a34692f6cfee64de0f85c0c14190f958da35d 0.1s done
+#22 exporting manifest list sha256:410805b83da05f3ec32b04d80c92aa73acbb1df6838a5133735ba74e59827603 0.0s done
+#22 naming to docker.io/library/weipai-backend:step56
+#22 naming to docker.io/library/weipai-backend:step56 done
+#22 unpacking to docker.io/library/weipai-backend:step56 0.0s done
+#22 DONE 0.3s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/1y8fea99797pyyw8bru190tsw
+构建：weipai-frontend:step56
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from frontend.Dockerfile
+#1 transferring dockerfile: 1.17kB done
+#1 DONE 0.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 3.2s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20
+#4 DONE 1.9s
+
+#5 [internal] load metadata for docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+#5 DONE 3.2s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 643B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 ...
+
+#8 [build 1/8] FROM docker.io/library/node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20
+#8 resolve docker.io/library/node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20 0.1s done
+#8 DONE 0.1s
+
+#9 [runtime 1/4] FROM docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+#9 resolve docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94 0.1s done
+#9 DONE 0.1s
+
+#7 [internal] load build context
+#7 transferring context: 2.79kB 6.7s
+#7 transferring context: 552.39kB 6.7s done
+#7 DONE 6.7s
+
+#10 [build 6/8] COPY frontend/src ./src
+#10 CACHED
+
+#11 [runtime 2/4] COPY --from=build /app/dist /usr/share/nginx/html
+#11 CACHED
+
+#12 [build 4/8] COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
+#12 CACHED
+
+#13 [build 7/8] COPY frontend/index.html frontend/tsconfig*.json frontend/vite.config.ts ./
+#13 CACHED
+
+#14 [build 8/8] RUN pnpm run build
+#14 CACHED
+
+#15 [runtime 3/4] COPY deploy/images/nginx.conf.template /etc/nginx/weipai.conf.template
+#15 CACHED
+
+#16 [build 2/8] WORKDIR /app
+#16 CACHED
+
+#17 [build 3/8] RUN npm install --global pnpm@11.25.0
+#17 CACHED
+
+#18 [build 5/8] RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile --store-dir /pnpm/store --network-concurrency=4 --child-concurrency=2
+#18 CACHED
+
+#19 [runtime 4/4] COPY --chmod=0555 deploy/images/frontend-entrypoint.sh /usr/local/bin/weipai-frontend
+#19 CACHED
+
+#20 exporting to image
+#20 exporting layers done
+#20 exporting manifest sha256:011b89555794fc2047245ef599bac2995a23fa21ad95144eec3fee7bf3696381 done
+#20 exporting config sha256:bdd88d2102f33112b71b1d409569237714d667ca73c304c16f11f809e7b2ab7f done
+#20 exporting attestation manifest sha256:06a9834388a1a27cadd30f25e226436d650c2afc3af49303364ddb05e14a67a8
+#20 exporting attestation manifest sha256:06a9834388a1a27cadd30f25e226436d650c2afc3af49303364ddb05e14a67a8 0.1s done
+#20 exporting manifest list sha256:9943eceee23e83e474f9c286b9431e52607bcff9cf979f73c56e8c57310ff1e4 0.0s done
+#20 naming to docker.io/library/weipai-frontend:step56
+#20 naming to docker.io/library/weipai-frontend:step56 done
+#20 unpacking to docker.io/library/weipai-frontend:step56 0.0s done
+#20 DONE 0.3s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/jhbefgaok40nbssdssvw1euae
+已创建镜像验收临时库（不打印凭证）
+通过：容器回环转发就绪
+通过：镜像内 Alembic 升级到现有 head
+通过：api /health HTTP 200、status=ok
+通过：前端镜像 healthy
+通过：SPA 深链接、资源 404、匿名 401、登录 200、CSRF 403、退出 204/401
+通过：同一后端镜像 worker 已连接 Temporal 并轮询独立队列
+通过：无效入口、缺 APP_ENV 与非法代理配置拒绝启动
+本次镜像容器、Schedule 与临时数据库已清理
+镜像验收全部通过；脱敏报告：F:\Weipai AI Ops Brain\.cache\images\3f371e68fd784be3ad5fc76f75050742\report.json

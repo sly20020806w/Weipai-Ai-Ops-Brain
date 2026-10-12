@@ -1,0 +1,155 @@
+{
+  "scope": "local_fake",
+  "task_id": "e2ccddc5-9f3a-4787-a317-89ef89c7d7e3",
+  "workflow_id": "ai-task-e2ccddc5-9f3a-4787-a317-89ef89c7d7e3",
+  "rca_evidence_id": "b79ebeb3-c651-4743-a7cb-d4bb384138af",
+  "review_evidence_id": "24770ba9-80b6-49e4-be32-38d05e8fbacd",
+  "label_evidence_id": "ef2f745c-fa49-4f44-b072-ea2cf3cd86e8",
+  "status": "ESCALATED",
+  "policy": "deny_L1_L5",
+  "credential_issues": 0,
+  "executions": 0,
+  "external_network_attempts": 0,
+  "metrics": {
+    "samples": [
+      {
+        "task_id": "e2ccddc5-9f3a-4787-a317-89ef89c7d7e3",
+        "rca_correct": true,
+        "runbook_attempted": true,
+        "runbook_hit": false,
+        "execution_attempted": false,
+        "execution_verified": false,
+        "approval_decisions": 0,
+        "approval_rejections": 0,
+        "human_takeover": true,
+        "alert": true,
+        "false_alert": false,
+        "mttr_seconds": null,
+        "tool_calls": 7,
+        "verification_attempts": 0,
+        "verification_failures": 0,
+        "automated": false,
+        "evidence_ids": [
+          "326dd4db-dfeb-4687-b7db-4fb77a1b1bfa",
+          "b0b6701c-1990-4372-b889-50ac396ab723",
+          "9a12b831-8ad2-4506-b21e-1476749305e2",
+          "f1250110-4802-4bf4-95a6-37f9f5aca92d",
+          "47ad4830-c06f-442a-b084-6514efce796f",
+          "cfff1468-8820-47c6-ab1b-1ceaab17e491",
+          "e4362c59-8e86-48b1-a9f4-e826f9201c61",
+          "abf7dcc1-5ee8-471f-8c19-67d264fd6c14",
+          "dc36900c-52f0-4bdf-9a36-183bc632de48",
+          "27fc46da-3c5c-422c-9480-b9b24aca1096",
+          "2b2cd263-9ae4-4e46-905e-61818896a2f7",
+          "b919a410-9fd2-43cf-957b-d23763102e48",
+          "24ab7e7f-6b7d-423d-aa8e-70137504b0c8",
+          "b9451664-b69e-444d-8003-88782812f90c",
+          "b0a3e743-3c9c-47f3-b828-169df55801c2",
+          "b79ebeb3-c651-4743-a7cb-d4bb384138af",
+          "aea31b95-89f1-40eb-8dc5-38b1b4c6f626",
+          "d807f0f1-4bc3-4807-aae2-4536bd2155f2",
+          "7c7dc2bf-939d-4af3-a419-8ad7a47050b1",
+          "234e39de-2373-449d-ad56-5335f1ddbc87",
+          "769a4d9c-f599-4afc-b6fd-b45c0665f772",
+          "1f61259e-ae37-4359-8356-0c44941729d5",
+          "876dff3a-0273-41a8-a355-d45ad61357fe",
+          "24770ba9-80b6-49e4-be32-38d05e8fbacd",
+          "d5102de2-35cc-4a5a-a450-730f35c30ab6",
+          "d08d0ebf-fbb3-4f55-bac5-4c0c72bbc9a7",
+          "ef2f745c-fa49-4f44-b072-ea2cf3cd86e8"
+        ],
+        "history_ids": [
+          "c21a7961-be85-4326-a2b9-79cfa68d2f6d",
+          "31951bd1-c679-435c-94c2-ed3bdc80d778",
+          "1db313d8-3ada-482e-bae3-5c9f0c14b05e",
+          "a4911ee9-0016-4b8b-a83c-6a99bc15f842",
+          "063fe8a1-765a-4aa3-893c-f060acf985f4",
+          "0c26b8f7-eed2-40bb-bf8f-c08115ab3a1a",
+          "f246b3e3-621b-40f9-897c-a1c556cd32da"
+        ]
+      }
+    ],
+    "metrics": [
+      {
+        "name": "rca_hit_rate",
+        "label": "RCA命中率",
+        "numerator": 1.0,
+        "denominator": 1,
+        "value": 1.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "runbook_hit_rate",
+        "label": "Runbook命中率",
+        "numerator": 0.0,
+        "denominator": 1,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "automatic_success_rate",
+        "label": "自动处理成功率",
+        "numerator": 0.0,
+        "denominator": 0,
+        "value": null,
+        "unit": "ratio"
+      },
+      {
+        "name": "approval_rejection_rate",
+        "label": "审批拒绝率",
+        "numerator": 0.0,
+        "denominator": 0,
+        "value": null,
+        "unit": "ratio"
+      },
+      {
+        "name": "human_takeover_rate",
+        "label": "人工接管率",
+        "numerator": 1.0,
+        "denominator": 1,
+        "value": 1.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "false_alert_rate",
+        "label": "误报率",
+        "numerator": 0.0,
+        "denominator": 1,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "mean_mttr",
+        "label": "平均MTTR",
+        "numerator": 0.0,
+        "denominator": 0,
+        "value": null,
+        "unit": "seconds"
+      },
+      {
+        "name": "mean_tool_calls",
+        "label": "平均Tool Call",
+        "numerator": 7.0,
+        "denominator": 1,
+        "value": 7.0,
+        "unit": "calls"
+      },
+      {
+        "name": "verification_failure_rate",
+        "label": "验证失败率",
+        "numerator": 0.0,
+        "denominator": 0,
+        "value": null,
+        "unit": "ratio"
+      },
+      {
+        "name": "automation_coverage",
+        "label": "自动化覆盖率",
+        "numerator": 0.0,
+        "denominator": 1,
+        "value": 0.0,
+        "unit": "ratio"
+      }
+    ]
+  }
+}

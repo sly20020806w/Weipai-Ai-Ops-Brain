@@ -1,0 +1,77 @@
+Metadata-Version: 2.5
+Name: weipai-ai-ops-brain
+Version: 0.1.0
+Summary: 微派 AI 业务运维平台的模块化单体后端
+Requires-Python: >=3.12
+Requires-Dist: alembic<2,>=1.16
+Requires-Dist: asyncpg<1,>=0.30
+Requires-Dist: fastapi>=0.142.2
+Requires-Dist: httpx2<3,>=2.13.1
+Requires-Dist: pydantic-settings>=2.15.0
+Requires-Dist: sqlalchemy[asyncio]<2.1,>=2.0
+Requires-Dist: uvicorn>=0.54.0
+Description-Content-Type: text/markdown
+
+# 后端工程
+
+使用 uv 管理 Python 3.12 环境及锁定依赖。`api` 是 FastAPI 启动入口；环境变量与完整验收命令见仓库根目录 `README.md`。
+
+`app/api/` 仅负责 HTTP 适配。`app/tasks/` 已实现 Step 4 的任务模型和状态服务，`app/ledger/` 已实现 Step 5 的证据与审计，`app/graph/` 已实现 Step 6 的关系存储与查询，其他业务模块按 `plans.md` 后续步骤实现；worker 入口在 Step 17 添加。
+
+## Step 3：数据库基础层
+
+使用 SQLAlchemy 2.0、asyncpg 和 Alembic，版本锁定在 `uv.lock`。连接地址只由 `DATABASE_URL` 环境变量提供，协议必须为 `postgresql+asyncpg`；`APP_ENV=local/test` 时主机只允许 `127.0.0.1`、`localhost`、`::1`。配置展示隐藏密码，不加载 `.env`。
+
+`app/db/base.py` 的抽象 `Base` 供后续业务模型继承：
+
+- `id`：PostgreSQL UUID 主键，SQLAlchemy 写入时生成 UUID v4。
+- `created_at`、`updated_at`：非空 `timestamp with time zone`，默认带时区的 UTC，数据库默认值为 `now()`。
+- `updated_at`：经 SQLAlchemy 更新记录时刷新，保留原 `created_at`。当前未提供数据库触发器，直接执行原始 SQL 更新时需显式设置更新时间。
+- `UTCDateTime`：拒绝无时区时间，写入和读取都规范为 UTC；会话连接同时设置 PostgreSQL 时区为 UTC。
+
+`app/db/session.py` 的 `Database` 拥有异步引擎和会话工厂。每次 `session()` 创建独立会话，`expire_on_commit=False`；退出时释放会话，未提交事务回滚。事务由业务服务显式使用 `async with session.begin()` 或 `await session.commit()`，HTTP 依赖不自动提交。`app/api/dependencies.py` 的 `get_session` 仅适配请求生命周期。API lifespan 创建引擎并在结束时销毁连接池；worker 等后续入口也可复用 `Database`。
+
+迁移配置为 `alembic.ini` 与 `alembic/env.py`。运行命令时设置 `APP_ENV` 和 `DATABASE_URL`，从 `backend/` 执行 `alembic upgrade head` / `alembic downgrade base`。项目根目录的完整 PowerShell 操作见 `README.md`。连接 URL 直接传入引擎，不写入 INI，避免密码中 `%` 的配置插值问题。`app/db/migrations.py` 将自定义 UTC 类型生成成原生 `sa.DateTime(timezone=True)`，避免生成的迁移引用未导入的应用模块。初始 revision 为 `0001_database_foundation`，只建立版本基线。后续步骤新增业务模型时，在 `alembic/env.py` 导入相应模型，再生成并审核迁移；API 启动不自动建表或执行迁移。
+
+## 验收
+
+在项目根目录执行 `check.ps1`，检查格式、ruff、mypy（包含迁移和验收脚本）、pytest 和 Git 忽略规则。无 Docker 时仍可通过单元测试；数据库集成测试明确跳过。
+
+执行 `check-db.ps1` 时，会加载已有本地容器的配置并新建独立的 `weipai_db_test_<随机 UUID>` 测试库，再运行数据库基础层、任务、Ledger 和 Context Graph 的四个集成测试文件。测试覆盖真实 PostgreSQL 写入和跨会话读回、UUID、UTC/timestamptz、更新时间、带偏移时间转换、无时区时间拒绝、事务回滚，以及当前迁移 head 的空库升降级、metadata、AI Task 状态历史、证据引用、只追加保护、审计原子性、图约束、并发 upsert 与 N 跳邻居查询。完成或失败后均尝试删除本次创建的临时库。集成测试还校验连接主机和测试库前缀；不会使用宿主机已有的 `DATABASE_URL`。
+
+## Step 6：Context Graph 存储
+
+`app/graph/models.py` 定义节点和边，`service.py` 提供显式事务中的节点/边 upsert、节点读取及 N 跳邻居查询。迁移 `0004_context_graph` 建立 `context_graph_nodes`、`context_graph_edges`，含来源、置信度、UTC 观察时间、外键与同来源同边唯一约束。
+
+重复观察只刷新边的 `last_seen`，不覆盖置信度或首次观察时间，迟到/并发观察不会使时间倒退；freshness 动态计算为距最近观察的时长，不落库。邻居查询默认有向，支持反向和双向、去重与跳数限制。详细字段、服务示例、样例图预期和可执行验收命令见 [Step 6 说明](../docs/context-graph.md)。
+
+Step 6 自检（2026-10-06）：ruff、格式、mypy（49 个源文件）通过，pytest 为 383 passed、146 skipped；`check-db.ps1` 的 146 项 PostgreSQL 集成测试全部通过（其中 23 项为图测试），临时库已清理。首次检查的长行与 RETURNING 类型推断问题已修复；本地应用库当前为 `0004_context_graph (head)`，metadata 检查通过。Step 7 未开始。
+
+## 官方参考
+
+异步引擎、会话生命周期和 `expire_on_commit` 的用法遵循 [SQLAlchemy 2 官方异步文档](https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html)；迁移使用 [Alembic 官方 asyncio 方式](https://alembic.sqlalchemy.org/en/latest/cookbook.html#using-asyncio-with-alembic)。
+
+## Step 3 自检历史（2026-10-06）
+
+- 完整阅读 `AGENTS.md`、`SPEC.md`、实际计划文件 `plans.md`；首个未完成项为 Step 3。目录未提供 AGENTS/SPEC 引用的原始设计文件，本次按现有规格中明确的数据库要求实施。
+- `check.ps1` 全部通过：ruff、格式、mypy（31 个源文件）、pytest（19 passed，4 项数据库集成测试在此入口明确跳过）及 Git 环境文件检查。
+- `check-db.ps1` 的全部 4 项 PostgreSQL 集成测试通过；空库 upgrade → check → downgrade → upgrade 成功，跨会话读写、UUID、UTC/timestamptz、更新时间及事务回滚符合预期。临时测试库已清理。
+- 修复初次自检的严格类型问题，并修复最终复核发现的自定义 UTC 类型迁移生成问题；修复后统一检查和 PostgreSQL 集成验收再次通过。
+- `use-local-db.ps1` 实际加载本地应用库环境成功；本地 `weipai` 应用库已执行 `alembic upgrade head`，`alembic current` 返回 `0001_database_foundation (head)`。两个新增 PowerShell 脚本的语法检查通过。
+- Step 3 已标记完成。未创建 Step 4 的 AI Task 或状态历史表，未接入真实运维系统。前端目录仍为预留骨架，按 Step 47 建立工程后再运行前端检查。
+
+## Step 4：AI Task 模型与状态机
+
+`app/tasks/states.py` 定义 8 个来源、SPEC 的全部 17 个状态与不可变合法迁移表；`models.py` 定义 `AITask` 和 `TaskStatusHistory`；`service.py` 是状态写入的唯一业务入口。创建任务时写入 NEW 的初始历史；每次成功迁移写入恰好一条带原因、调用角色与 UTC 时间的历史。迁移使用行锁与状态版本检查，状态和历史在同一 SAVEPOINT 中落库，外层事务由调用方提交。
+
+迁移 `0002_ai_tasks` 建立两张表及枚举 CHECK、历史外键和序号唯一约束。公开状态属性只读，内部状态属性赋值及 Session 批量写入受到服务边界约束。`RESOLVED` 仅允许从 `VERIFYING` 以 Verifier 内部角色迁移；真实独立验证在 Step 31 接入。完整迁移表、使用例子、当前范围和自检命令见 [Step 4 说明](../docs/task-state-machine.md)。
+
+Step 4 自检（2026-10-06）：统一检查通过，mypy 检查 39 个源文件；pytest 为 321 passed、90 skipped。`check-db.ps1` 中全部 90 项 PostgreSQL 集成测试通过，包含 74 条合法边真实落库、跨会话读回、状态与历史回滚、两个旧状态会话竞争迁移及 ORM 写入边界。首次自检发现的格式、类型标注、表清单顺序断言和批量写入测试构造问题均已修复；临时测试库已清理。本地应用库当前 head 为 `0002_ai_tasks`。
+
+## Step 5：Evidence Ledger 与审计日志
+
+`app/ledger/models.py` 定义 `Evidence`、`AuditRecord` 与四种审计事件类型；`service.py` 提供追加记录、证据 ID 精确查询和任务时间序查询。迁移 `0003_evidence_ledger` 建立 `evidence_ledger`、`audit_log`、任务/证据外键、JSON 对象与非空约束，以及拒绝 UPDATE/DELETE/TRUNCATE 的 PostgreSQL 触发器。ORM 和 Session 批量更新/删除也受只追加边界保护。
+
+任务创建与迁移现在同步追加审计，状态、历史与审计共用任务服务原有 SAVEPOINT；审计写入失败时全部回滚。证据和审计追加要求显式外层事务；服务不提交，调用方应将关联记录一起提交。所有采集、发生及公共时间为 UTC，审计不能引用另一任务的证据。升级前的历史不做回填。
+
+Step 5 自检（2026-10-06）：ruff、格式、mypy 通过，mypy 检查 44 个源文件；pytest 为 349 passed、123 skipped；`check-db.ps1` 的全部 123 项 PostgreSQL 集成测试通过，临时库已清理。格式和迁移泛型标注问题已修复；本地应用库当前 head 为 `0003_evidence_ledger`，metadata 检查、两张新表和两个保护触发器均通过。详细服务示例与验收方法见 [Step 5 说明](../docs/evidence-ledger.md)。

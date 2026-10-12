@@ -1,0 +1,114 @@
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已设置本地 Temporal 地址 127.0.0.1:7233（仅当前进程）。
+$ tsc -b && vite build
+vite v8.3.3 building client environment for production...
+transforming...
+✓ 3191 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                             1.37 kB │ gzip:   0.50 kB
+dist/assets/index-iuLBN5Ou.css             18.69 kB │ gzip:   5.09 kB
+dist/assets/ui-qgJN88Op.js                  0.13 kB │ gzip:   0.12 kB
+dist/assets/ui-B34PiX7e.js                  0.46 kB │ gzip:   0.29 kB
+dist/assets/rolldown-runtime-D2aABDIb.js    0.68 kB │ gzip:   0.41 kB
+dist/assets/ui-C0UaT5IU.js                 13.71 kB │ gzip:   5.94 kB
+dist/assets/ui-DmdeaKFQ.js                 17.02 kB │ gzip:   6.64 kB
+dist/assets/vendor-Bw_IMsMP.js             39.80 kB │ gzip:  11.67 kB
+dist/assets/ui-N5hmqWaf.js                 97.65 kB │ gzip:  31.02 kB
+dist/assets/index-D_iFeSNv.js             141.68 kB │ gzip:  40.66 kB
+dist/assets/ui-CNyWc0sp.js                190.62 kB │ gzip:  60.07 kB
+dist/assets/ui-MvCKbgPX.js                224.51 kB │ gzip:  64.80 kB
+dist/assets/react-C-Qar-KD.js             260.52 kB │ gzip:  82.84 kB
+dist/assets/ui-1T2_-2AT.js                310.83 kB │ gzip: 105.60 kB
+
+✓ built in 32.12s
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 2.7s of this 32.1s build (9%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite:css transform (5%, 1.6s, 1 call)
+  - plugin vite:css-post renderChunk (3%, 1.0s, 12 calls)
+Additional callback time came from callbacks under 1s.
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+已创建独立的本地临时测试库（不输出凭证）
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_database_foundation, 建立数据库迁移基线；业务表由后续步骤添加。
+INFO  [alembic.runtime.migration] Running upgrade 0001_database_foundation -> 0002_ai_tasks, 建立 AI Task 及状态历史表。
+INFO  [alembic.runtime.migration] Running upgrade 0002_ai_tasks -> 0003_evidence_ledger, 建立只追加的 Evidence Ledger 与审计日志。
+INFO  [alembic.runtime.migration] Running upgrade 0003_evidence_ledger -> 0004_context_graph, 建立 Context Graph 节点与带来源、置信度和观察时间的有向边。
+INFO  [alembic.runtime.migration] Running upgrade 0004_context_graph -> 0005_change_timeline, 新增最小变更事件引用表和原子去重约束。
+INFO  [alembic.runtime.migration] Running upgrade 0005_change_timeline -> 0006_knowledge_brain, 知识条目与 pgvector 嵌入。
+INFO  [alembic.runtime.migration] Running upgrade 0006_knowledge_brain -> 0007_ops_events, 统一运维事件与任务的唯一关联。
+INFO  [alembic.runtime.migration] Running upgrade 0007_ops_events -> 0008_scheduled_events, OpsEvent 接纳 Temporal 定时来源，复用既有任务与去重表。
+INFO  [alembic.runtime.migration] Running upgrade 0008_scheduled_events -> 0009_state_prediction, 检测游标只引用 OpsEvent，扩展 State/Prediction 事件来源。
+INFO  [alembic.runtime.migration] Running upgrade 0009_state_prediction -> 0010_runbook_engine, Runbook 全部内容字段、成熟度与向量。
+INFO  [alembic.runtime.migration] Running upgrade 0010_runbook_engine -> 0011_human_interaction, 人工回答草稿与独立问答审计类型。
+INFO  [alembic.runtime.migration] Running upgrade 0011_human_interaction -> 0012_postmortem, 允许学习生成 OpsEvent；已有改进记录时拒绝有损降级。
+INFO  [alembic.runtime.migration] Running upgrade 0012_postmortem -> 0013_runbook_maturity, 持久化 Runbook 内容版本，修改内容后旧审核和验证记录失效。
+INFO  [alembic.runtime.migration] Running upgrade 0013_runbook_maturity -> 0014_inspection_risks, 巡检风险只保存分类、观察时间和 Evidence 引用。
+INFO  [alembic.runtime.migration] Running upgrade 0014_inspection_risks -> 0015_single_user_auth, 持久化可撤销会话及单用户登录限速；密钥不入库。
+INFO  [alembic.runtime.migration] Running upgrade 0015_single_user_auth -> 0016_catalog_audit, 认知目录编辑审计：独立只追加表，原任务/Evidence 外键保持强约束。
+正在复用既有 Fake Workflow 准备事故、事件、结论和证据…
+
+Running 3 tests using 1 worker
+
+(node:14896) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  x  1 smoke\chat.spec.ts:3:1 › 真实 SSE 问答/追问、Evidence、Human 任务与审批门禁，以及手机布局 (2.5m)
+(node:51952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 2 smoke\shell.spec.ts:6:1 › 真实 Cookie 登录、17 个入口、刷新、会话撤销与移动端导航 (11.8s)
+  ok 3 smoke\tasks.spec.ts:3:1 › 真实 API 任务筛选、证据读回、复盘与事件关联，以及手机布局 (5.8s)
+
+
+  1) smoke\chat.spec.ts:3:1 › 真实 SSE 问答/追问、Evidence、Human 任务与审批门禁，以及手机布局 ───────────────────────────
+
+    Test timeout of 150000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 150000ms exceeded.
+    Call log:
+      - waiting for getByLabel('请求方式', { exact: true })
+
+
+      53 |   expect(follow.evidence_ids.every((id: string) => !first.evidence_ids.includes(id))).toBe(true);
+      54 |   await page.screenshot({ path: '../.cache/frontend-smoke/chat-desktop.png', fullPage: true, animations: 'disabled' });
+    > 55 |   await page.getByLabel('请求方式', { exact: true }).selectOption('task');
+         |                                                  ^
+      56 |   await page.getByLabel('问题', { exact: true }).fill('请调查并回滚 payment-service v2.3.7 到 v2.3.6');
+      57 |   await page.getByRole('button', { name: '发送问题', exact: true }).click();
+      58 |   await expect(page.getByText('策略判定：需要审批', { exact: true })).toBeVisible({ timeout: 60_000 });
+        at F:\Weipai AI Ops Brain\frontend\smoke\chat.spec.ts:55:50
+
+    Error Context: ..\.cache\frontend-smoke\results\chat-真实-SSE-问答-追问、Evidence、Human-任务与审批门禁，以及手机布局\error-context.md
+
+  1 failed
+    smoke\chat.spec.ts:3:1 › 真实 SSE 问答/追问、Evidence、Human 任务与审批门禁，以及手机布局 ────────────────────────────
+  2 passed (2.9m)
+临时测试库已清理
+Traceback (most recent call last):
+  File "F:\Weipai AI Ops Brain\scripts\check_db.py", line 758, in <module>
+    main()
+  File "F:\Weipai AI Ops Brain\scripts\check_db.py", line 201, in main
+    asyncio.run(
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "F:\Weipai AI Ops Brain\scripts\demo_frontend.py", line 176, in run_demo
+    await run_browser(url, interactive=interactive, chat=settings)
+  File "F:\Weipai AI Ops Brain\scripts\demo_frontend.py", line 327, in run_browser
+    await asyncio.to_thread(
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['F:\\新建文件夹 (3)\\node.EXE', 'F:\\Weipai AI Ops Brain\\frontend\\node_modules\\@playwright\\test\\cli.js', 'test', 'shell.spec.ts', 'tasks.spec.ts', 'chat.spec.ts']' returned non-zero exit status 1.

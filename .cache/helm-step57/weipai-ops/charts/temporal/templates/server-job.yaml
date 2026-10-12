@@ -1,0 +1,90 @@
+---
+# Source: weipai-ops/charts/temporal/templates/server-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: "weipai-ops"
+  name: weipai-temporal-schema
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 100
+  activeDeadlineSeconds: 
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      name: weipai-temporal-schema
+      labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: weipai-temporal
+      restartPolicy: OnFailure
+      initContainers:
+        - name: manage-schema-default-store
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c']
+          args:
+            - temporal-sql-tool setup-schema -v 0.0 && temporal-sql-tool update-schema --schema-dir /etc/temporal/schema/postgresql/v12/temporal/versioned
+          env:
+            - name: SQL_PLUGIN
+              value: postgres12
+            - name: SQL_HOST
+              value: postgres.platform.svc
+            - name: SQL_PORT
+              value: "5432"
+            - name: SQL_DATABASE
+              value: temporal
+            - name: SQL_USER
+              value: "temporal"
+            - name: SQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          volumeMounts:
+        - name: manage-schema-visibility-store
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c']
+          args:
+            - temporal-sql-tool setup-schema -v 0.0 && temporal-sql-tool update-schema --schema-dir /etc/temporal/schema/postgresql/v12/visibility/versioned
+          env:
+            - name: SQL_PLUGIN
+              value: postgres12
+            - name: SQL_HOST
+              value: postgres.platform.svc
+            - name: SQL_PORT
+              value: "5432"
+            - name: SQL_DATABASE
+              value: temporal_visibility
+            - name: SQL_USER
+              value: "temporal"
+            - name: SQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          volumeMounts:
+
+      containers:
+        - name: done
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', 'echo "Store setup completed"']

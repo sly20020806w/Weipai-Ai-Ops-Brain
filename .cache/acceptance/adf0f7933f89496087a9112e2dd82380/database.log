@@ -1,0 +1,50 @@
+已创建独立的本地临时测试库（不输出凭证）
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 580 items
+
+tests\test_database_integration.py ....                                  [  0%]
+tests\test_tasks_integration.py ........................................ [  7%]
+..............................................                           [ 15%]
+tests\test_ledger_integration.py .................................       [ 21%]
+tests\test_graph_integration.py .......................                  [ 25%]
+tests\test_tools_integration.py ................                         [ 27%]
+tests\test_workflow_activities_integration.py ......                     [ 28%]
+tests\test_discovery_integration.py .........                            [ 30%]
+tests\test_timeline_integration.py .......                               [ 31%]
+tests\test_knowledge_integration.py ...............                      [ 34%]
+tests\test_events_integration.py .......                                 [ 35%]
+tests\test_scheduling_integration.py ....                                [ 36%]
+tests\test_detection_integration.py .......                              [ 37%]
+tests\test_main_agent_integration.py ...........                         [ 39%]
+tests\test_runbooks_integration.py ................                      [ 42%]
+tests\test_experts_integration.py ..........................             [ 46%]
+tests\test_reviewer_integration.py ................                      [ 49%]
+tests\test_action_plans_integration.py ................                  [ 52%]
+tests\test_human_interaction_integration.py ................             [ 54%]
+tests\test_approval_integration.py .................                     [ 57%]
+tests\test_verifier_integration.py ...................                   [ 61%]
+tests\test_executor_integration.py .......................               [ 65%]
+tests\test_safety_integration.py ...............                         [ 67%]
+tests\test_postmortem_integration.py .............                       [ 69%]
+tests\test_runbook_maturity_integration.py ..................            [ 72%]
+tests\test_evaluation_integration.py ..............                      [ 75%]
+tests\test_automation_integration.py ...........                         [ 77%]
+tests\test_tickets_integration.py ........                               [ 78%]
+tests\test_releases_integration.py ..............                        [ 81%]
+tests\test_inspection_integration.py .............                       [ 83%]
+tests\test_architecture_integration.py ................                  [ 86%]
+tests\test_war_room_integration.py .....................                 [ 89%]
+tests\test_auth_integration.py ..............                            [ 92%]
+tests\test_console_integration.py ................                       [ 94%]
+tests\test_operations_integration.py ....................                [ 98%]
+tests\test_chat_integration.py ..........                                [100%]
+
+- generated xml file: F:\Weipai AI Ops Brain\.cache\e2e\ce684e78b78c40b58ef8cf304bfea247.xml -
+====================== 580 passed in 1136.56s (0:18:56) =======================
+临时测试库已清理
+数据库基础层、AI Task、Evidence Ledger、审计、Context Graph 与 Tool Dispatcher、Workflow Activity、Change Timeline、Knowledge Brain 验收全部通过

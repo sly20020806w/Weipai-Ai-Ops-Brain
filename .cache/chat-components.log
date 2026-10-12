@@ -1,0 +1,28 @@
+
+ RUN  v5.0.3 F:/Weipai AI Ops Brain/frontend
+
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > SSE 按段渲染，跨网络字节的中文和分段引用可点击原始 Evidence 836ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 追问使用上一轮任务且新建 request_id；更换服务不会携带旧任务 412ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 断流不自动重试，手动重试复用原请求并替换已显示片段 335ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 错误事件保留任务，可读取持久化回答，不额外创建任务 366ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 刷新链接恢复已保存回答，pending 只提供手动读取 172ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 恢复 404 显示中文错误并能重新读取 173ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 恢复 422 显示中文错误并能重新读取 187ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 恢复 503 显示中文错误并能重新读取 170ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > SSE 401 清空身份和业务缓存，返回登录 210ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > POST 409 不自动重试并保留问题 177ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > POST 422 不自动重试并保留问题 200ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > POST 503 不自动重试并保留问题 191ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 处置模式显示真实等待审批、Policy 和计划引用，不发送批准请求 355ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 无效服务/空问题/单边或倒置或超长时间窗拒绝发送；有效窗口转换 UTC 636ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 连续点击只提交一次，停止接收保留已接纳任务 408ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 回答文本安全展示，未核对的 Evidence 不生成链接 260ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > done 的任务身份不符时拒绝交付 144ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 无回答转人工不把片段当完成结论；新对话清除旧追问 221ms
+ ✓ src/chat/page.test.tsx > Step 53 AI 对话页面 > 无效任务链接不发出读取请求 72ms
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  08:06:20
+   Duration  14.07s (import 42%, tests 40%, environment 9%, setup 6%, transform 3%)
+

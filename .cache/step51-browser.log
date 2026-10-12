@@ -1,0 +1,64 @@
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已设置本地 Temporal 地址 127.0.0.1:7233（仅当前进程）。
+$ tsc -b && vite build
+vite v8.3.3 building client environment for production...
+transforming...
+✓ 3182 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                             1.37 kB │ gzip:   0.50 kB
+dist/assets/index-BzMw7r7F.css             16.28 kB │ gzip:   4.63 kB
+dist/assets/ui-qgJN88Op.js                  0.13 kB │ gzip:   0.12 kB
+dist/assets/ui-B34PiX7e.js                  0.46 kB │ gzip:   0.29 kB
+dist/assets/rolldown-runtime-D2aABDIb.js    0.68 kB │ gzip:   0.41 kB
+dist/assets/ui-C0UaT5IU.js                 13.71 kB │ gzip:   5.94 kB
+dist/assets/ui-DmdeaKFQ.js                 17.02 kB │ gzip:   6.64 kB
+dist/assets/vendor-Fn3jiR36.js             36.36 kB │ gzip:  10.71 kB
+dist/assets/ui-N5hmqWaf.js                 97.65 kB │ gzip:  31.02 kB
+dist/assets/index-Bokk0lWf.js             117.06 kB │ gzip:  33.15 kB
+dist/assets/ui-CNyWc0sp.js                190.62 kB │ gzip:  60.07 kB
+dist/assets/ui-MvCKbgPX.js                224.51 kB │ gzip:  64.80 kB
+dist/assets/react-C-Qar-KD.js             260.52 kB │ gzip:  82.84 kB
+dist/assets/ui-1T2_-2AT.js                310.83 kB │ gzip: 105.60 kB
+
+✓ built in 763ms
+已创建独立的本地临时测试库（不输出凭证）
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_database_foundation, 建立数据库迁移基线；业务表由后续步骤添加。
+INFO  [alembic.runtime.migration] Running upgrade 0001_database_foundation -> 0002_ai_tasks, 建立 AI Task 及状态历史表。
+INFO  [alembic.runtime.migration] Running upgrade 0002_ai_tasks -> 0003_evidence_ledger, 建立只追加的 Evidence Ledger 与审计日志。
+INFO  [alembic.runtime.migration] Running upgrade 0003_evidence_ledger -> 0004_context_graph, 建立 Context Graph 节点与带来源、置信度和观察时间的有向边。
+INFO  [alembic.runtime.migration] Running upgrade 0004_context_graph -> 0005_change_timeline, 新增最小变更事件引用表和原子去重约束。
+INFO  [alembic.runtime.migration] Running upgrade 0005_change_timeline -> 0006_knowledge_brain, 知识条目与 pgvector 嵌入。
+INFO  [alembic.runtime.migration] Running upgrade 0006_knowledge_brain -> 0007_ops_events, 统一运维事件与任务的唯一关联。
+INFO  [alembic.runtime.migration] Running upgrade 0007_ops_events -> 0008_scheduled_events, OpsEvent 接纳 Temporal 定时来源，复用既有任务与去重表。
+INFO  [alembic.runtime.migration] Running upgrade 0008_scheduled_events -> 0009_state_prediction, 检测游标只引用 OpsEvent，扩展 State/Prediction 事件来源。
+INFO  [alembic.runtime.migration] Running upgrade 0009_state_prediction -> 0010_runbook_engine, Runbook 全部内容字段、成熟度与向量。
+INFO  [alembic.runtime.migration] Running upgrade 0010_runbook_engine -> 0011_human_interaction, 人工回答草稿与独立问答审计类型。
+INFO  [alembic.runtime.migration] Running upgrade 0011_human_interaction -> 0012_postmortem, 允许学习生成 OpsEvent；已有改进记录时拒绝有损降级。
+INFO  [alembic.runtime.migration] Running upgrade 0012_postmortem -> 0013_runbook_maturity, 持久化 Runbook 内容版本，修改内容后旧审核和验证记录失效。
+INFO  [alembic.runtime.migration] Running upgrade 0013_runbook_maturity -> 0014_inspection_risks, 巡检风险只保存分类、观察时间和 Evidence 引用。
+INFO  [alembic.runtime.migration] Running upgrade 0014_inspection_risks -> 0015_single_user_auth, 持久化可撤销会话及单用户登录限速；密钥不入库。
+INFO  [alembic.runtime.migration] Running upgrade 0015_single_user_auth -> 0016_catalog_audit, 认知目录编辑审计：独立只追加表，原任务/Evidence 外键保持强约束。
+正在复用既有 Fake Workflow 准备事故、事件、结论和证据…
+正在准备自动化建议的 Fake 场景与真实报告…
+正在准备发布的 Fake 场景与真实报告…
+正在准备工单的 Fake 场景与真实报告…
+正在准备架构评审的 Fake 场景与真实报告…
+正在准备重大保障的 Fake 场景与真实报告…
+正在运行 Fake 巡检，生成四条持久化风险…
+巡检任务 CLOSED：ai-task-22a793a2-7ada-4654-aab8-951bb4b91c08
+报告 Evidence: c999b8b2-440e-43b4-98bc-da54487378cc
+
+Running 3 tests using 1 worker
+
+(node:21376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 smoke\operations.spec.ts:4:1 › 七类真实运营列表/详情、巡检风险与 Evidence、筛选刷新和手机布局 (26.7s)
+  ok 2 smoke\shell.spec.ts:6:1 › 真实 Cookie 登录、17 个入口、刷新、会话撤销与移动端导航 (5.2s)
+  ok 3 smoke\tasks.spec.ts:3:1 › 真实 API 任务筛选、证据读回、复盘与事件关联，以及手机布局 (8.8s)
+
+  3 passed (45.3s)
+Step 51 真实浏览器通过：七类运营列表/详情、报告与 Evidence、巡检产生的四条风险；外壳与任务页面回归通过。
+临时测试库已清理

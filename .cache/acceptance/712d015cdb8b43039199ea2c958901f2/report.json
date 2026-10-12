@@ -1,0 +1,103 @@
+{
+  "scope": "local_fake",
+  "status": "failed",
+  "started_at": "2026-10-09T05:10:37.191262+00:00",
+  "source_sha256": "fae5272d99b86af692f16b4ff0b62d008b54b4c55a17eacfc80f692d40166c5f",
+  "report_directory": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2",
+  "criteria": {
+    "rca_hit_rate": 1.0,
+    "minimum_samples": 3
+  },
+  "stages": [
+    {
+      "name": "unified",
+      "label": "统一检查、安全扫描、Fake E2E 与前端构建",
+      "status": "passed",
+      "started_at": "2026-10-09T05:10:45.131967+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\unified.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:16:02.086531+00:00"
+    },
+    {
+      "name": "database",
+      "label": "完整数据库/Temporal 场景回归与迁移（零跳过）",
+      "status": "passed",
+      "started_at": "2026-10-09T05:16:02.152130+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\database.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:34:39.275051+00:00"
+    },
+    {
+      "name": "workflow",
+      "label": "既有 Workflow 兼容与恢复",
+      "status": "passed",
+      "started_at": "2026-10-09T05:34:39.306753+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\workflow.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:35:21.488158+00:00"
+    },
+    {
+      "name": "schedules",
+      "label": "日历与官方时间跳跃专项",
+      "status": "passed",
+      "started_at": "2026-10-09T05:35:21.501181+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\schedules.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:35:39.517741+00:00"
+    },
+    {
+      "name": "replay",
+      "label": "Replay 边界、十项手算指标及失败场景",
+      "status": "passed",
+      "started_at": "2026-10-09T05:35:39.560105+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\replay.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:36:50.437610+00:00"
+    },
+    {
+      "name": "security",
+      "label": "本机 Reader RBAC、鉴权与扫描",
+      "status": "passed",
+      "started_at": "2026-10-09T05:36:50.442179+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\security.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:38:07.928309+00:00"
+    },
+    {
+      "name": "readonly",
+      "label": "Helm、本机只读 Discovery 与零写凭证",
+      "status": "passed",
+      "started_at": "2026-10-09T05:38:07.932400+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\readonly.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:38:33.947461+00:00"
+    },
+    {
+      "name": "shadow",
+      "label": "影子 RCA、独立标签和 Replay 门槛",
+      "status": "passed",
+      "started_at": "2026-10-09T05:38:33.952995+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\shadow.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T05:39:09.428439+00:00"
+    },
+    {
+      "name": "images",
+      "label": "重建镜像、API/Worker 与前端实际启动",
+      "status": "failed",
+      "started_at": "2026-10-09T05:39:09.430684+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\712d015cdb8b43039199ea2c958901f2\\images.log",
+      "exit_code": 1,
+      "finished_at": "2026-10-09T05:42:07.436693+00:00"
+    }
+  ],
+  "real_environment_verified": false,
+  "production_writes_enabled": false,
+  "deferred": [
+    "真实 ACK 上线与 Discovery",
+    "真实告警和公司网关影子调查及本人标注",
+    "真实多场景 Replay 基准与本人阈值",
+    "首个真实 L1 动作与生产授权效果"
+  ],
+  "finished_at": "2026-10-09T05:42:07.473435+00:00"
+}

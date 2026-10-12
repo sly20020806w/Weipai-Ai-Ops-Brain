@@ -1,0 +1,94 @@
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已设置本地 Temporal 地址 127.0.0.1:7233（仅当前进程）。
+已创建独立的本地临时测试库（不输出凭证）
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_database_foundation, 建立数据库迁移基线；业务表由后续步骤添加。
+INFO  [alembic.runtime.migration] Running upgrade 0001_database_foundation -> 0002_ai_tasks, 建立 AI Task 及状态历史表。
+INFO  [alembic.runtime.migration] Running upgrade 0002_ai_tasks -> 0003_evidence_ledger, 建立只追加的 Evidence Ledger 与审计日志。
+INFO  [alembic.runtime.migration] Running upgrade 0003_evidence_ledger -> 0004_context_graph, 建立 Context Graph 节点与带来源、置信度和观察时间的有向边。
+INFO  [alembic.runtime.migration] Running upgrade 0004_context_graph -> 0005_change_timeline, 新增最小变更事件引用表和原子去重约束。
+INFO  [alembic.runtime.migration] Running upgrade 0005_change_timeline -> 0006_knowledge_brain, 知识条目与 pgvector 嵌入。
+INFO  [alembic.runtime.migration] Running upgrade 0006_knowledge_brain -> 0007_ops_events, 统一运维事件与任务的唯一关联。
+INFO  [alembic.runtime.migration] Running upgrade 0007_ops_events -> 0008_scheduled_events, OpsEvent 接纳 Temporal 定时来源，复用既有任务与去重表。
+INFO  [alembic.runtime.migration] Running upgrade 0008_scheduled_events -> 0009_state_prediction, 检测游标只引用 OpsEvent，扩展 State/Prediction 事件来源。
+INFO  [alembic.runtime.migration] Running upgrade 0009_state_prediction -> 0010_runbook_engine, Runbook 全部内容字段、成熟度与向量。
+INFO  [alembic.runtime.migration] Running upgrade 0010_runbook_engine -> 0011_human_interaction, 人工回答草稿与独立问答审计类型。
+INFO  [alembic.runtime.migration] Running upgrade 0011_human_interaction -> 0012_postmortem, 允许学习生成 OpsEvent；已有改进记录时拒绝有损降级。
+INFO  [alembic.runtime.migration] Running upgrade 0012_postmortem -> 0013_runbook_maturity, 持久化 Runbook 内容版本，修改内容后旧审核和验证记录失效。
+INFO  [alembic.runtime.migration] Running upgrade 0013_runbook_maturity -> 0014_inspection_risks, 巡检风险只保存分类、观察时间和 Evidence 引用。
+
+需要审批：{"task_id":"993bb945-0e10-4a7e-853c-2430945338c2","planning_version":5,"conclusion_evidence_id":"60e068b2-2fe5-46a5-8c71-ce23a6496cb3","review_evidence_id":"5051631b-3f61-4808-9816-3fad68b068e3","environment":"test","summary":{"statement":"保障容量与风险检查及独立反证通过，逐项提交 Policy。","evidence_ids":["60e068b2-2fe5-46a5-8c71-ce23a6496cb3","5051631b-3f61-4808-9816-3fad68b068e3"]},"actions":[{"action":{"id":"war-room-prepare","name":"scale_service","service_name":"payment-service","parameters":{"from_replicas":3,"to_replicas":5},"risk_level":"L3","rationale":{"statement":"保障容量与风险检查及独立反证通过，逐项提交 Policy。","evidence_ids":["60e068b2-2fe5-46a5-8c71-ce23a6496cb3","5051631b-3f61-4808-9816-3fad68b068e3"]},"preconditions":["保障时间、资源 UID/版本、镜像、容量和宿主规则仍与检查一致"],"rollback":{"description":"停止自动化，重新审批恢复操作前副本数","parameters":{"from_replicas":5,"to_replicas":3},"trigger":"业务指标恶化或目标未就绪"},"verification":{"checks":["资源精确读回及就绪副本","业务健康与监控风险","回收后容量余量"],"success_criteria":"资源达到批准副本数且独立业务/风险/容量检查均通过","failure_response":"停止自动尝试并转人工，不把执行成功当作保障完成"}},"policy":{"action_name":"scale_service","risk_level":"L3","environment":"test","decision":"need_approval","reason":"默认规则：L1–L5 动作需要审批","matched_rule_ids":[]}}]}
+输入 approve 批准或 reject 拒绝：
+需要审批：{"task_id":"993bb945-0e10-4a7e-853c-2430945338c2","planning_version":11,"conclusion_evidence_id":"a0af7299-18c6-47cf-b929-8240274d73cd","review_evidence_id":"a973305c-be10-4e9c-be9f-415afb6ad397","environment":"test","summary":{"statement":"保障容量与风险检查及独立反证通过，逐项提交 Policy。","evidence_ids":["a0af7299-18c6-47cf-b929-8240274d73cd","a973305c-be10-4e9c-be9f-415afb6ad397"]},"actions":[{"action":{"id":"war-room-cleanup","name":"scale_service","service_name":"payment-service","parameters":{"from_replicas":5,"to_replicas":3},"risk_level":"L3","rationale":{"statement":"保障容量与风险检查及独立反证通过，逐项提交 Policy。","evidence_ids":["a0af7299-18c6-47cf-b929-8240274d73cd","a973305c-be10-4e9c-be9f-415afb6ad397"]},"preconditions":["保障时间、资源 UID/版本、镜像、容量和宿主规则仍与检查一致"],"rollback":{"description":"停止自动化，重新审批恢复操作前副本数","parameters":{"from_replicas":3,"to_replicas":5},"trigger":"业务指标恶化或目标未就绪"},"verification":{"checks":["资源精确读回及就绪副本","业务健康与监控风险","回收后容量余量"],"success_criteria":"资源达到批准副本数且独立业务/风险/容量检查均通过","failure_response":"停止自动尝试并转人工，不把执行成功当作保障完成"}},"policy":{"action_name":"scale_service","risk_level":"L3","environment":"test","decision":"need_approval","reason":"默认规则：L1–L5 动作需要审批","matched_rule_ids":[]}}]}
+输入 approve 批准或 reject 拒绝：保障准备检查清单与容量评估：
+预计峰值 1000 RPS，原副本 3，所需副本 5；Evidence 60e068b2-2fe5-46a5-8c71-ce23a6496cb3
+  服务健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  K8s 健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  云资源健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  数据库健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  Redis 健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  MQ 健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  磁盘使用率：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  网络健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  监控覆盖：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  告警健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  日志异常检查：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  Trace 异常检查：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  证书有效期：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  DNS 健康：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  资源容量使用率：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  日成本异常增长：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  安全基线：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  单点风险：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  缺少 PDB：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  缺少 HPA：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  副本不足：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  Runbook 覆盖：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  容量增长趋势：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  预计容量耗尽：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  权限过大：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  凭证风险：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  公网暴露：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  安全组风险：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  闲置 ECS：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  资源低利用率：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  资源过度配置：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  临时资源未回收：healthy；Evidence eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+保障报告：
+  容量评估：预计峰值 1000 RPS，需 5 副本；保障前 3 副本。
+    Evidence：60e068b2-2fe5-46a5-8c71-ce23a6496cb3、eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  资源准备：授权资源准备动作数：1；准备结果经独立核验。
+    Evidence：6ea19dac-b801-44ff-83d7-f07074d9c277、3f41ad29-162e-4182-83bf-97e484577274
+  监控检查：监控覆盖：healthy
+    Evidence：eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  告警检查：保障前告警：healthy
+    Evidence：eae916b5-748c-4bcb-aff8-b7145e0e7b0e、9c24159b-fc49-4b7c-bf24-d8f71fa25c26
+  Runbook检查：检索后适用 Runbook 1 个，已核对适用及排除条件；写入仍需单独授权。
+    Evidence：75fa9138-046a-45ad-92bc-05bae5517012
+  回滚检查：回滚准备事实已核对；恢复原副本数需新计划和独立审批，旧审批不可复用。
+    Evidence：eae916b5-748c-4bcb-aff8-b7145e0e7b0e
+  风险扫描：稳定性、容量、安全、成本共 32 项检查；准备与回收阶段均已通过。
+    Evidence：60e068b2-2fe5-46a5-8c71-ce23a6496cb3、a0af7299-18c6-47cf-b929-8240274d73cd
+  实时盯盘：完成 2 个 UTC 保障窗口，每个窗口有独立事实与风险评估证据。
+    Evidence：9c24159b-fc49-4b7c-bf24-d8f71fa25c26
+  异常处理：创建 1 个去重处置任务，继续使用统一任务引擎；这些处置任务的结果须单独核验。
+    Evidence：9c24159b-fc49-4b7c-bf24-d8f71fa25c26
+  结束后资源回收：保障结束后资源恢复到 3 副本；剩余负载所需 2 副本，业务健康及目标均已独立验证。
+    Evidence：2231b123-8c06-4402-8723-4e8c89ed2955、27092e4c-8ae2-4633-9c19-44f952e217db
+  保障报告：重大保障独立核验通过；准备、盯盘、异常派发、授权动作及回收全部可追踪。
+    Evidence：60e068b2-2fe5-46a5-8c71-ce23a6496cb3、9c24159b-fc49-4b7c-bf24-d8f71fa25c26、27092e4c-8ae2-4633-9c19-44f952e217db
+{
+  "任务状态": "CLOSED",
+  "报告章节": 11,
+  "容量准备": "3 → 5 副本",
+  "保障结束回收": "5 → 3 副本",
+  "异常处置任务": 1,
+  "分别审批的 Fake 动作": 2,
+  "重复提交新增任务": 0,
+  "Workflow ID": "ai-task-993bb945-0e10-4a7e-853c-2430945338c2",
+  "报告 Evidence ID": "d691e4b6-8d52-4de7-b2b2-c578d44aebb1",
+  "Temporal 历史回放": "通过"
+}
+Step 42 War Room Fake 演示全部通过
+临时测试库已清理

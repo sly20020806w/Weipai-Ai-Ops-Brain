@@ -1,0 +1,18 @@
+{
+  "python_packages": 46,
+  "npm_packages": 420,
+  "vulnerabilities": 0,
+  "secret_findings": 0,
+  "scanner_positive_control": "passed",
+  "git_history_scanned": true,
+  "gitleaks_version": "8.30.1",
+  "osv_version": "2.6.0",
+  "lock_sha256": {
+    "backend/uv.lock": "fa12c699d3501b6a2ccbb3f7df461fccee5b915abe0b76663713eec21d99c5d2",
+    "frontend/pnpm-lock.yaml": "7f85345d5c12146bd728d3f400cf7fb14c931e5ed2746e42b3427a136dab2fca"
+  },
+  "rbac_denied_checks": 59,
+  "rbac_read_checks": 3,
+  "reader_token_identity_checks": 1,
+  "checked_at": "2026-10-09T06:16:58.079652+00:00"
+}

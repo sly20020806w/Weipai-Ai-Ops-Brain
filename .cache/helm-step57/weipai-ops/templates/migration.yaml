@@ -1,0 +1,42 @@
+---
+# Source: weipai-ops/templates/migration.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: weipai-ops-migrate
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: migration
+    spec:
+      # pre-install 时应用 SA 尚未创建；默认 SA 显式禁用 token。
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: migrate
+          image: "registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          command: [python, -m, alembic]
+          args: [upgrade, head]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"100m","memory":"256Mi"}}
+          env:
+            - {name: APP_ENV, value: production}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: "weipai-platform-database", key: DATABASE_URL}

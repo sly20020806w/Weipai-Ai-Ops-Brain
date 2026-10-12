@@ -1,0 +1,44 @@
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已创建独立的本地临时测试库（不输出凭证）
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 548 items
+
+tests\test_database_integration.py ....                                  [  0%]
+tests\test_tasks_integration.py ........................................ [  8%]
+..............................................                           [ 16%]
+tests\test_ledger_integration.py .................................       [ 22%]
+tests\test_graph_integration.py .......................                  [ 26%]
+tests\test_tools_integration.py ................                         [ 29%]
+tests\test_workflow_activities_integration.py ......                     [ 30%]
+tests\test_discovery_integration.py .........                            [ 32%]
+tests\test_timeline_integration.py .......                               [ 33%]
+tests\test_knowledge_integration.py ...............                      [ 36%]
+tests\test_events_integration.py .......                                 [ 37%]
+tests\test_scheduling_integration.py .sss                                [ 38%]
+tests\test_detection_integration.py .......                              [ 39%]
+tests\test_main_agent_integration.py ...........                         [ 41%]
+tests\test_runbooks_integration.py ................                      [ 44%]
+tests\test_experts_integration.py ..........................             [ 49%]
+tests\test_reviewer_integration.py ................                      [ 52%]
+tests\test_action_plans_integration.py ................                  [ 55%]
+tests\test_human_interaction_integration.py ................             [ 58%]
+tests\test_approval_integration.py .................                     [ 61%]
+tests\test_verifier_integration.py ...................                   [ 64%]
+tests\test_executor_integration.py .......................               [ 68%]
+tests\test_safety_integration.py ..............F                         [ 71%]
+tests\test_postmortem_integration.py ........FFFFF                       [ 73%]
+tests\test_runbook_maturity_integration.py ................FF            [ 77%]
+tests\test_evaluation_integration.py .......临时测试库已清理
+Traceback (most recent call last):
+  File "F:\Weipai AI Ops Brain\scripts\check_db.py", line 687, in <module>
+    main()
+  File "F:\Weipai AI Ops Brain\scripts\check_db.py", line 605, in main
+    subprocess.run(
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['F:\\Weipai AI Ops Brain\\backend\\.venv\\Scripts\\python.exe', '-m', 'pytest', 'tests/test_database_integration.py', 'tests/test_tasks_integration.py', 'tests/test_ledger_integration.py', 'tests/test_graph_integration.py', 'tests/test_tools_integration.py', 'tests/test_workflow_activities_integration.py', 'tests/test_discovery_integration.py', 'tests/test_timeline_integration.py', 'tests/test_knowledge_integration.py', 'tests/test_events_integration.py', 'tests/test_scheduling_integration.py', 'tests/test_detection_integration.py', 'tests/test_main_agent_integration.py', 'tests/test_runbooks_integration.py', 'tests/test_experts_integration.py', 'tests/test_reviewer_integration.py', 'tests/test_action_plans_integration.py', 'tests/test_human_interaction_integration.py', 'tests/test_approval_integration.py', 'tests/test_verifier_integration.py', 'tests/test_executor_integration.py', 'tests/test_safety_integration.py', 'tests/test_postmortem_integration.py', 'tests/test_runbook_maturity_integration.py', 'tests/test_evaluation_integration.py', 'tests/test_automation_integration.py', 'tests/test_tickets_integration.py', 'tests/test_releases_integration.py', 'tests/test_inspection_integration.py', 'tests/test_architecture_integration.py', 'tests/test_war_room_integration.py', 'tests/test_auth_integration.py', 'tests/test_console_integration.py', '-v', '--tb=short']' returned non-zero exit status 4294967295.

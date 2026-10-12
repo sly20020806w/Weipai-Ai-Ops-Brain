@@ -1,0 +1,179 @@
+---
+# Source: weipai-ops/templates/backend.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: weipai-ops-api
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/instance: weipai, app.kubernetes.io/component: api}
+  ports: [{name: http, port: 8000, targetPort: http}]
+---
+# Source: weipai-ops/templates/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weipai-ops-api
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+    app.kubernetes.io/component: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/instance: weipai, app.kubernetes.io/component: api}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: api
+    spec:
+      serviceAccountName: weipai-ops-console
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: api
+          image: "registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          args: [api]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"100m","memory":"256Mi"}}
+          env:
+            - name: APP_ENV
+              value: production
+            - name: OPS_READ_ONLY
+              value: "true"
+            - name: WORKER_MODE
+              value: readonly_discovery
+            - name: CONNECTOR_MODE
+              value: real
+            - name: EXECUTION_CONFIG
+              value: '{"enabled":false,"bindings":[]}'
+            - name: AGENT_CONFIG
+              value: '{"enabled":false}'
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: "weipai-platform-database", key: DATABASE_URL}
+            - name: AUTH_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-console-auth", key: AUTH_CONFIG}
+            - name: TEMPORAL_CONFIG
+              value: "{\"address\":\"weipai-temporal-frontend:7233\",\"namespace\":\"default\",\"task_queue\":\"weipai-readonly-discovery\"}"
+            - name: API_HOST
+              value: 0.0.0.0
+          ports: [{name: http, containerPort: 8000}]
+          startupProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 20}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - {name: tmp, emptyDir: {sizeLimit: 64Mi}}
+---
+# Source: weipai-ops/templates/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weipai-ops-worker
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+    app.kubernetes.io/component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/instance: weipai, app.kubernetes.io/component: worker}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: worker
+    spec:
+      serviceAccountName: weipai-ops-reader
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: worker
+          image: "registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          args: [worker]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"2","memory":"2Gi"},"requests":{"cpu":"200m","memory":"512Mi"}}
+          env:
+            - name: APP_ENV
+              value: production
+            - name: OPS_READ_ONLY
+              value: "true"
+            - name: WORKER_MODE
+              value: readonly_discovery
+            - name: CONNECTOR_MODE
+              value: real
+            - name: EXECUTION_CONFIG
+              value: '{"enabled":false,"bindings":[]}'
+            - name: AGENT_CONFIG
+              value: '{"enabled":false}'
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: "weipai-platform-database", key: DATABASE_URL}
+            - name: AUTH_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-console-auth", key: AUTH_CONFIG}
+            - name: TEMPORAL_CONFIG
+              value: "{\"address\":\"weipai-temporal-frontend:7233\",\"namespace\":\"default\",\"task_queue\":\"weipai-readonly-discovery\"}"
+            - name: KUBERNETES_READER_TOKEN_FILE
+              value: /var/run/weipai-reader/token
+            - name: KUBERNETES_READER_CA_FILE
+              value: /var/run/weipai-reader/ca.crt
+            - name: KUBERNETES_CONFIG
+              value: "{\"base_url\":\"https://kubernetes.default.svc\",\"cluster_name\":\"ack-cluster\",\"namespace_allowlist\":[\"weipai-observe\"]}"
+            - name: DISCOVERY_CONFIG
+              value: "{\"interval_seconds\":300,\"lookback_seconds\":900,\"schedule_id\":\"weipai-discovery-readonly\"}"
+            - name: CONNECTOR_READER_TOKENS
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: CONNECTOR_READER_TOKENS}
+            - name: OPS_PLATFORM_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: OPS_PLATFORM_CONFIG}
+            - name: ARMS_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: ARMS_CONFIG}
+            - name: GIT_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: GIT_CONFIG}
+            - name: CLOUD_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: CLOUD_CONFIG}
+          startupProbe:
+            exec: {command: [python, -c, "from pathlib import Path; raise SystemExit(not Path('/tmp/weipai-worker-ready').exists())"]}
+            periodSeconds: 5
+            failureThreshold: 120
+          readinessProbe:
+            exec: {command: [python, -c, "from pathlib import Path; raise SystemExit(not Path('/tmp/weipai-worker-ready').exists())"]}
+            periodSeconds: 10
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+            - {name: reader, mountPath: /var/run/weipai-reader, readOnly: true}
+      volumes:
+        - {name: tmp, emptyDir: {sizeLimit: 64Mi}}
+        - name: reader
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken: {path: token, expirationSeconds: 3600}
+              - configMap:
+                  name: kube-root-ca.crt
+                  items: [{key: ca.crt, path: ca.crt}]

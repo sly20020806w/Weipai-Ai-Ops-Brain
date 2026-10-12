@@ -1,0 +1,17 @@
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已设置本地 Temporal 地址 127.0.0.1:7233（仅当前进程）。
+已创建独立的本地临时测试库（不输出凭证）
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 65 items
+
+tests\test_console.py .................................................  [ 75%]
+tests\test_console_integration.py ................                       [100%]
+
+============================= 65 passed in 46.02s =============================
+临时测试库已清理
+Step 44 任务闭环 API 验收全部通过

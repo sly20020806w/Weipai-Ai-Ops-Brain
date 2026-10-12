@@ -1,0 +1,35 @@
+已创建独立的本地临时测试库（不输出凭证）
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_database_foundation, 建立数据库迁移基线；业务表由后续步骤添加。
+INFO  [alembic.runtime.migration] Running upgrade 0001_database_foundation -> 0002_ai_tasks, 建立 AI Task 及状态历史表。
+INFO  [alembic.runtime.migration] Running upgrade 0002_ai_tasks -> 0003_evidence_ledger, 建立只追加的 Evidence Ledger 与审计日志。
+INFO  [alembic.runtime.migration] Running upgrade 0003_evidence_ledger -> 0004_context_graph, 建立 Context Graph 节点与带来源、置信度和观察时间的有向边。
+INFO  [alembic.runtime.migration] Running upgrade 0004_context_graph -> 0005_change_timeline, 新增最小变更事件引用表和原子去重约束。
+INFO  [alembic.runtime.migration] Running upgrade 0005_change_timeline -> 0006_knowledge_brain, 知识条目与 pgvector 嵌入。
+INFO  [alembic.runtime.migration] Running upgrade 0006_knowledge_brain -> 0007_ops_events, 统一运维事件与任务的唯一关联。
+INFO  [alembic.runtime.migration] Running upgrade 0007_ops_events -> 0008_scheduled_events, OpsEvent 接纳 Temporal 定时来源，复用既有任务与去重表。
+INFO  [alembic.runtime.migration] Running upgrade 0008_scheduled_events -> 0009_state_prediction, 检测游标只引用 OpsEvent，扩展 State/Prediction 事件来源。
+INFO  [alembic.runtime.migration] Running upgrade 0009_state_prediction -> 0010_runbook_engine, Runbook 全部内容字段、成熟度与向量。
+INFO  [alembic.runtime.migration] Running upgrade 0010_runbook_engine -> 0011_human_interaction, 人工回答草稿与独立问答审计类型。
+
+任务 2865c360-ec3e-44e4-b702-da4ae0271fae → NEED_HUMAN_JUDGMENT
+Fake 飞书问题卡片：支付高峰期优先稳定性还是节省成本？
+问题 ID：aeb1842e-46f4-53f8-816c-93f0bff5a417
+请输入你的回答：回答：高峰期优先稳定性
+回答 Evidence ID：01debd17-1ed5-41d2-a7ac-5499b4471a38
+Knowledge 草稿 ID：34f73a06-d974-4e42-8198-28985d9171ce
+任务恢复并完成调查、Reviewer 与 Action Plan → WAITING_APPROVAL
+Workflow ID：ai-task-2865c360-ec3e-44e4-b702-da4ae0271fae
+
+任务 6253449f-aa83-44f6-9a93-e1cff3b8ba51 → WAITING_INFORMATION
+Fake 飞书问题卡片：请补充支付业务的特殊限制。
+问题 ID：815689ec-0ff8-594f-8d29-7cfa8d643312
+请输入你的回答：回答：变更前先评估业务影响
+回答 Evidence ID：8320e850-c512-4b80-bcfb-9c4206e08619
+Knowledge 草稿 ID：060278b7-25d1-4008-ba35-965856da1fe5
+任务恢复并完成调查、Reviewer 与 Action Plan → WAITING_APPROVAL
+Workflow ID：ai-task-6253449f-aa83-44f6-9a93-e1cff3b8ba51
+
+Step 29 人工判断与补充信息 Fake 演示全部通过
+临时测试库已清理

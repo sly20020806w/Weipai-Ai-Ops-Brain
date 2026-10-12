@@ -1,0 +1,1 @@
+–³weipai-ai-ops-brain¥0.1.0–°alembic>=1.16,<2°asyncpg>=0.30,<1°fastapi>=0.142.2¹pydantic-settings>=2.15.0½sqlalchemy[asyncio]>=2.0,<2.1¯uvicorn>=0.54.0¦>=3.12Â

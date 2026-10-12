@@ -1,0 +1,15 @@
+Metadata-Version: 2.5
+Name: weipai-ai-ops-brain
+Version: 0.1.0
+Summary: 微派 AI 业务运维平台的模块化单体后端
+Requires-Python: >=3.12
+Requires-Dist: fastapi>=0.142.2
+Requires-Dist: pydantic-settings>=2.15.0
+Requires-Dist: uvicorn>=0.54.0
+Description-Content-Type: text/markdown
+
+# 后端工程
+
+使用 uv 管理 Python 3.12 环境及锁定依赖。`api` 是 FastAPI 启动入口；环境变量与完整验收命令见仓库根目录 `README.md`。
+
+`app/api/` 仅负责 HTTP 适配。其余业务模块当前只有包骨架，按 `plans.md` 后续步骤实现；worker 入口在 Step 17 添加。

@@ -1,0 +1,2 @@
+[console_scripts]
+api = app.api.main:main

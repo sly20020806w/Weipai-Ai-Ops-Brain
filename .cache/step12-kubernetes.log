@@ -1,0 +1,327 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0 -- F:\Weipai AI Ops Brain\backend\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 129 items
+
+tests/test_kubernetes.py::test_shared_contract_and_namespace_service_uid_filters[fake] PASSED [  0%]
+tests/test_kubernetes.py::test_shared_contract_and_namespace_service_uid_filters[http-mock] PASSED [  1%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-../payment-None-list_pods] PASSED [  2%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-../payment-None-list_deployments] PASSED [  3%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-../payment-None-list_events] PASSED [  3%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-PAYMENT-None-list_pods] PASSED [  4%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-PAYMENT-None-list_deployments] PASSED [  5%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-PAYMENT-None-list_events] PASSED [  6%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake--None-list_pods] PASSED [  6%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake--None-list_deployments] PASSED [  7%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake--None-list_events] PASSED [  8%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment-x,y-list_pods] PASSED [  9%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment-x,y-list_deployments] PASSED [ 10%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment-x,y-list_events] PASSED [ 10%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment-x=other-list_pods] PASSED [ 11%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment-x=other-list_deployments] PASSED [ 12%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment-x=other-list_events] PASSED [ 13%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment--list_pods] PASSED [ 13%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment--list_deployments] PASSED [ 14%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[fake-payment--list_events] PASSED [ 15%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-../payment-None-list_pods] PASSED [ 16%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-../payment-None-list_deployments] PASSED [ 17%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-../payment-None-list_events] PASSED [ 17%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-PAYMENT-None-list_pods] PASSED [ 18%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-PAYMENT-None-list_deployments] PASSED [ 19%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-PAYMENT-None-list_events] PASSED [ 20%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock--None-list_pods] PASSED [ 20%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock--None-list_deployments] PASSED [ 21%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock--None-list_events] PASSED [ 22%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment-x,y-list_pods] PASSED [ 23%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment-x,y-list_deployments] PASSED [ 24%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment-x,y-list_events] PASSED [ 24%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment-x=other-list_pods] PASSED [ 25%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment-x=other-list_deployments] PASSED [ 26%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment-x=other-list_events] PASSED [ 27%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment--list_pods] PASSED [ 27%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment--list_deployments] PASSED [ 28%]
+tests/test_kubernetes.py::test_invalid_selector_fails_before_request[http-mock-payment--list_events] PASSED [ 29%]
+tests/test_kubernetes.py::test_closed_readers_fail[fake-list_pods] PASSED [ 30%]
+tests/test_kubernetes.py::test_closed_readers_fail[fake-list_deployments] PASSED [ 31%]
+tests/test_kubernetes.py::test_closed_readers_fail[fake-list_events] PASSED [ 31%]
+tests/test_kubernetes.py::test_closed_readers_fail[http-mock-list_pods] PASSED [ 32%]
+tests/test_kubernetes.py::test_closed_readers_fail[http-mock-list_deployments] PASSED [ 33%]
+tests/test_kubernetes.py::test_closed_readers_fail[http-mock-list_events] PASSED [ 34%]
+tests/test_kubernetes.py::test_fake_snapshot_isolated_from_mutable_labels PASSED [ 34%]
+tests/test_kubernetes.py::test_factory_defaults_fake_and_real_has_only_reader PASSED [ 35%]
+tests/test_kubernetes.py::test_real_forbidden_in_local_and_test[local] PASSED [ 36%]
+tests/test_kubernetes.py::test_real_forbidden_in_local_and_test[test] PASSED [ 37%]
+tests/test_kubernetes.py::test_real_requires_explicit_config_and_identity[overrides0-KUBERNETES_CONFIG] PASSED [ 37%]
+tests/test_kubernetes.py::test_real_requires_explicit_config_and_identity[overrides1-\u53ea\u8bfb\u51ed\u8bc1] PASSED [ 38%]
+tests/test_kubernetes.py::test_invalid_base_url[http://k8s.invalid] PASSED [ 39%]
+tests/test_kubernetes.py::test_invalid_base_url[https://user:pass@k8s.invalid] PASSED [ 40%]
+tests/test_kubernetes.py::test_invalid_base_url[https://k8s.invalid/api] PASSED [ 41%]
+tests/test_kubernetes.py::test_invalid_base_url[https://k8s.invalid?x=1] PASSED [ 41%]
+tests/test_kubernetes.py::test_invalid_base_url[https://k8s.invalid#x] PASSED [ 42%]
+tests/test_kubernetes.py::test_invalid_base_url[https://k8s.invalid:0] PASSED [ 43%]
+tests/test_kubernetes.py::test_invalid_base_url[https://k8s.invalid/../] PASSED [ 44%]
+tests/test_kubernetes.py::test_invalid_base_url[https://k8s.invalid\\api] PASSED [ 44%]
+tests/test_kubernetes.py::test_invalid_label_key[] PASSED                [ 45%]
+tests/test_kubernetes.py::test_invalid_label_key[a=b] PASSED             [ 46%]
+tests/test_kubernetes.py::test_invalid_label_key[a,b] PASSED             [ 47%]
+tests/test_kubernetes.py::test_invalid_label_key[/app] PASSED            [ 48%]
+tests/test_kubernetes.py::test_invalid_label_key[a/b/c] PASSED           [ 48%]
+tests/test_kubernetes.py::test_invalid_label_key[Upper.invalid/app] PASSED [ 49%]
+tests/test_kubernetes.py::test_invalid_label_key[app/] PASSED            [ 50%]
+tests/test_kubernetes.py::test_invalid_label_key[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED [ 51%]
+tests/test_kubernetes.py::test_config_reads_environment PASSED           [ 51%]
+tests/test_kubernetes.py::test_reject_executor_and_wrong_connector_credentials PASSED [ 52%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[301] PASSED [ 53%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[401] PASSED [ 54%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[403] PASSED [ 55%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[404] PASSED [ 55%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[410] PASSED [ 56%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[429] PASSED [ 57%]
+tests/test_kubernetes.py::test_http_errors_redacted_and_no_redirect_retry[500] PASSED [ 58%]
+tests/test_kubernetes.py::test_transport_errors_redacted[ReadTimeout-KubernetesTimeout] PASSED [ 58%]
+tests/test_kubernetes.py::test_transport_errors_redacted[ConnectError-KubernetesTransportError] PASSED [ 59%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[json] PASSED [ 60%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[kind] PASSED [ 61%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[version] PASSED [ 62%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[missing] PASSED [ 62%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[namespace] PASSED [ 63%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[selector] PASSED [ 64%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[negative] PASSED [ 65%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[duplicate] PASSED [ 65%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[cursor-loop] PASSED [ 66%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[version-change] PASSED [ 67%]
+tests/test_kubernetes.py::test_invalid_or_incomplete_response_is_rejected[max-pages] PASSED [ 68%]
+tests/test_kubernetes.py::test_minimal_snapshot_discards_secrets_and_preserves_unknown_status PASSED [ 68%]
+tests/test_kubernetes.py::test_snapshot_rejects_invalid_events_and_duplicates[naive] PASSED [ 69%]
+tests/test_kubernetes.py::test_snapshot_rejects_invalid_events_and_duplicates[order] PASSED [ 70%]
+tests/test_kubernetes.py::test_snapshot_rejects_invalid_events_and_duplicates[namespace] PASSED [ 71%]
+tests/test_kubernetes.py::test_snapshot_rejects_invalid_events_and_duplicates[duplicate] PASSED [ 72%]
+tests/test_kubernetes.py::test_demo_ignores_host_production_settings PASSED [ 72%]
+tests/test_kubernetes.py::test_custom_service_label_key[fake] PASSED     [ 73%]
+tests/test_kubernetes.py::test_custom_service_label_key[http-mock] PASSED [ 74%]
+tests/test_kubernetes.py::test_empty_page_with_continue_is_not_end PASSED [ 75%]
+tests/test_kubernetes.py::test_cluster_object_event_and_non_utc_time_are_valid PASSED [ 75%]
+tests/test_kubernetes_tools.py::test_three_l0_schemas_and_duplicate_registration PASSED [ 76%]
+tests/test_kubernetes_tools.py::test_each_call_has_exactly_one_evidence_and_audit[get_k8s_status] PASSED [ 77%]
+tests/test_kubernetes_tools.py::test_each_call_has_exactly_one_evidence_and_audit[get_service_runtime] PASSED [ 78%]
+tests/test_kubernetes_tools.py::test_each_call_has_exactly_one_evidence_and_audit[query_events] PASSED [ 79%]
+tests/test_kubernetes_tools.py::test_policy_blocks_before_connector[deny-get_k8s_status] PASSED [ 79%]
+tests/test_kubernetes_tools.py::test_policy_blocks_before_connector[deny-get_service_runtime] PASSED [ 80%]
+tests/test_kubernetes_tools.py::test_policy_blocks_before_connector[deny-query_events] PASSED [ 81%]
+tests/test_kubernetes_tools.py::test_policy_blocks_before_connector[need_approval-get_k8s_status] PASSED [ 82%]
+tests/test_kubernetes_tools.py::test_policy_blocks_before_connector[need_approval-get_service_runtime] PASSED [ 82%]
+tests/test_kubernetes_tools.py::test_policy_blocks_before_connector[need_approval-query_events] PASSED [ 83%]
+tests/test_kubernetes_tools.py::test_replay_closed_connector_uses_original_evidence[get_k8s_status] PASSED [ 84%]
+tests/test_kubernetes_tools.py::test_replay_closed_connector_uses_original_evidence[get_service_runtime] PASSED [ 85%]
+tests/test_kubernetes_tools.py::test_replay_closed_connector_uses_original_evidence[query_events] PASSED [ 86%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params0-get_k8s_status] PASSED [ 86%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params0-get_service_runtime] PASSED [ 87%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params0-query_events] PASSED [ 88%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params1-get_k8s_status] PASSED [ 89%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params1-get_service_runtime] PASSED [ 89%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params1-query_events] PASSED [ 90%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params2-get_k8s_status] PASSED [ 91%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params2-get_service_runtime] PASSED [ 92%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params2-query_events] PASSED [ 93%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params3-get_k8s_status] PASSED [ 93%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params3-get_service_runtime] PASSED [ 94%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params3-query_events] PASSED [ 95%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params4-get_k8s_status] PASSED [ 96%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params4-get_service_runtime] PASSED [ 96%]
+tests/test_kubernetes_tools.py::test_invalid_inputs_never_read[params4-query_events] PASSED [ 97%]
+tests/test_kubernetes_tools.py::test_closed_connector_failure_has_no_success_evidence[get_k8s_status] PASSED [ 98%]
+tests/test_kubernetes_tools.py::test_closed_connector_failure_has_no_success_evidence[get_service_runtime] PASSED [ 99%]
+tests/test_kubernetes_tools.py::test_closed_connector_failure_has_no_success_evidence[query_events] PASSED [100%]
+
+============================= 129 passed in 2.12s =============================
+{
+  "mode": "fake",
+  "cluster_name": "ack-fake",
+  "deployments": [
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "uid": "deployment-payment",
+        "name": "payment-service",
+        "namespace": "payment",
+        "labels": {
+          "app.kubernetes.io/name": "payment-service"
+        },
+        "generation": 7,
+        "resourceVersion": null
+      },
+      "spec": {
+        "replicas": 3
+      },
+      "status": {
+        "observedGeneration": 7,
+        "replicas": 3,
+        "readyReplicas": 2,
+        "availableReplicas": 2,
+        "updatedReplicas": 3,
+        "conditions": [
+          {
+            "type": "Available",
+            "status": "True",
+            "reason": null
+          }
+        ]
+      }
+    }
+  ],
+  "pods": [
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "uid": "pod-payment-1",
+        "name": "payment-service-7d9c-1",
+        "namespace": "payment",
+        "labels": {
+          "app.kubernetes.io/name": "payment-service"
+        },
+        "generation": null,
+        "resourceVersion": null
+      },
+      "spec": {
+        "nodeName": "fake-node-1",
+        "containers": [
+          {
+            "name": "payment",
+            "image": "registry.example.invalid/payment:v2.3.7"
+          }
+        ]
+      },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "Ready",
+            "status": "True",
+            "reason": null
+          }
+        ],
+        "containerStatuses": [
+          {
+            "name": "payment",
+            "ready": true,
+            "restartCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "uid": "pod-payment-2",
+        "name": "payment-service-7d9c-2",
+        "namespace": "payment",
+        "labels": {
+          "app.kubernetes.io/name": "payment-service"
+        },
+        "generation": null,
+        "resourceVersion": null
+      },
+      "spec": {
+        "nodeName": "fake-node-1",
+        "containers": [
+          {
+            "name": "payment",
+            "image": "registry.example.invalid/payment:v2.3.7"
+          }
+        ]
+      },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "Ready",
+            "status": "True",
+            "reason": null
+          }
+        ],
+        "containerStatuses": [
+          {
+            "name": "payment",
+            "ready": true,
+            "restartCount": 0
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "uid": "pod-payment-3",
+        "name": "payment-service-7d9c-3",
+        "namespace": "payment",
+        "labels": {
+          "app.kubernetes.io/name": "payment-service"
+        },
+        "generation": null,
+        "resourceVersion": null
+      },
+      "spec": {
+        "nodeName": "fake-node-1",
+        "containers": [
+          {
+            "name": "payment",
+            "image": "registry.example.invalid/payment:v2.3.7"
+          }
+        ]
+      },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "Ready",
+            "status": "False",
+            "reason": null
+          }
+        ],
+        "containerStatuses": [
+          {
+            "name": "payment",
+            "ready": false,
+            "restartCount": 4
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "apiVersion": "v1",
+      "kind": "Event",
+      "metadata": {
+        "uid": "event-payment-backoff",
+        "name": "payment-service.backoff",
+        "namespace": "payment",
+        "labels": {},
+        "generation": null,
+        "resourceVersion": null
+      },
+      "involvedObject": {
+        "uid": "pod-payment-3",
+        "kind": "Pod",
+        "name": "payment-service-7d9c-3",
+        "namespace": "payment"
+      },
+      "type": "Warning",
+      "reason": "BackOff",
+      "message": "样例：支付容器重启退避",
+      "count": 4,
+      "firstTimestamp": "2026-10-01T01:00:00Z",
+      "lastTimestamp": "2026-10-01T01:05:00Z",
+      "eventTime": null
+    }
+  ]
+}
+Step 12 Fake 样例验收通过（未连接真实集群）

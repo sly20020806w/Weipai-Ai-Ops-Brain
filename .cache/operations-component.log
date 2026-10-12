@@ -1,0 +1,85 @@
+
+ RUN  v5.0.3 F:/Weipai AI Ops Brain/frontend
+
+ ❯ src/operations/pages.test.tsx (16 tests | 1 failed) 8776ms
+   ❯ Step 51 运营页面 (16)
+     × 巡检报告链接进入同服务风险中心，结束任务仍显示未恢复风险 536ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/operations/pages.test.tsx > Step 51 运营页面 > 巡检报告链接进入同服务风险中心，结束任务仍显示未恢复风险
+TestingLibraryElementError: Found multiple elements with the text: 未恢复
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<option
+  value="true"
+>
+  未恢复
+</option>
+
+Ignored nodes: comments, script, style
+<span
+  class="ant-tag ant-tag-filled ant-tag-gold css-dev-only-do-not-override-oc1rc0 css-var-_r_2p_"
+>
+  未恢复
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="console"
+    >
+      <div
+        class="rail-desktop"
+      >
+        <aside
+          class="rail"
+        >
+          <div
+            class="brand"
+          >
+            <span
+              aria-hidden="true"
+              class="brand-mark"
+            >
+              W
+            </span>
+            <div>
+              <strong>
+                微派 AI 运维
+              </strong>
+              <small>
+                WEIPAI OPS BRAIN
+              </small>
+            </div>
+          </div>
+          <div
+            class="rail-caption"
+          >
+            个...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/operations/pages.test.tsx:127:144
+    125|     mocks('inspections'); server.use(http.get(`${origin}/api/risks`, (…
+    126|     mount(`/inspections/${taskId}`); const user = userEvent.setup(); a…
+    127|     await screen.findByRole('link', { name: '缺少 PDB' }); expect(reques…
+       |                                                                                                                                                ^
+    128|   });
+    129|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  23:27:07
+   Duration  15.58s (tests 57%, import 30%, environment 6%, setup 5%, transform 2%)
+

@@ -1,0 +1,40 @@
+{
+  "scope": "local_fake",
+  "status": "failed",
+  "started_at": "2026-10-09T04:41:35.706058+00:00",
+  "source_sha256": "ae7da23955bda572642e8f256a3bcc48dbdb21626d5c9512530f9b5afc80f245",
+  "report_directory": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\07cc018d81044c8a98e5ceee63e8ba48",
+  "criteria": {
+    "rca_hit_rate": 1.0,
+    "minimum_samples": 3
+  },
+  "stages": [
+    {
+      "name": "unified",
+      "label": "统一检查、安全扫描、Fake E2E 与前端构建",
+      "status": "passed",
+      "started_at": "2026-10-09T04:41:39.313802+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\07cc018d81044c8a98e5ceee63e8ba48\\unified.log",
+      "exit_code": 0,
+      "finished_at": "2026-10-09T04:46:49.703262+00:00"
+    },
+    {
+      "name": "database",
+      "label": "完整数据库/Temporal 场景回归与迁移（零跳过）",
+      "status": "failed",
+      "started_at": "2026-10-09T04:46:49.721030+00:00",
+      "log": "F:\\Weipai AI Ops Brain\\.cache\\acceptance\\07cc018d81044c8a98e5ceee63e8ba48\\database.log",
+      "exit_code": 1,
+      "finished_at": "2026-10-09T05:06:03.042553+00:00"
+    }
+  ],
+  "real_environment_verified": false,
+  "production_writes_enabled": false,
+  "deferred": [
+    "真实 ACK 上线与 Discovery",
+    "真实告警和公司网关影子调查及本人标注",
+    "真实多场景 Replay 基准与本人阈值",
+    "首个真实 L1 动作与生产授权效果"
+  ],
+  "finished_at": "2026-10-09T05:06:03.065288+00:00"
+}

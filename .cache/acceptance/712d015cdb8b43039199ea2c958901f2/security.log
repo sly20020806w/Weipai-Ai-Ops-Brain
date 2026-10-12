@@ -1,0 +1,48 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 120 items
+
+tests\test_security.py ................................................. [ 40%]
+.......................................................................  [100%]
+
+============================= 120 passed in 3.91s =============================
+{
+  "python_packages": 46,
+  "npm_packages": 420,
+  "vulnerabilities": 0,
+  "secret_findings": 0,
+  "scanner_positive_control": "passed",
+  "git_history_scanned": true,
+  "gitleaks_version": "8.30.1",
+  "osv_version": "2.6.0",
+  "lock_sha256": {
+    "backend/uv.lock": "fa12c699d3501b6a2ccbb3f7df461fccee5b915abe0b76663713eec21d99c5d2",
+    "frontend/pnpm-lock.yaml": "7f85345d5c12146bd728d3f400cf7fb14c931e5ed2746e42b3427a136dab2fca"
+  },
+  "rbac_denied_checks": 59,
+  "rbac_read_checks": 3,
+  "reader_token_identity_checks": 1,
+  "checked_at": "2026-10-09T05:37:44.895274+00:00"
+}
+安全扫描通过；脱敏报告：F:\Weipai AI Ops Brain\.cache\security\4d0a059ba5704aa9af39b9145ead3207
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已创建独立的本地临时测试库（不输出凭证）
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 56 items
+
+tests\test_auth.py ..........................................            [ 75%]
+tests\test_auth_integration.py ..............                            [100%]
+
+============================= 56 passed in 15.02s =============================
+临时测试库已清理
+Step 43 鉴权验收全部通过
+Step 55 安全验收全部通过。

@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-09T02:53:04.732634+00:00",
+  "status": "passed",
+  "api_health": 200,
+  "worker_polling": true,
+  "frontend_login": true,
+  "negative_checks": 4,
+  "backend_image": "sha256:285f5c2014fc63902847d42abac60d9daf5c32b6fd96f71d9200e3559e1bfab2",
+  "frontend_image": "sha256:780ee25a916e1dc99f6104e4934fc82a1d636054f79477daa6973561b1e35067"
+}

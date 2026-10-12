@@ -1,0 +1,538 @@
+{
+  "scope": "local_fake",
+  "fixture": "three_distinct_incidents_same_payment_scenario",
+  "gate": {
+    "criteria": {
+      "rca_hit_rate": 1.0,
+      "minimum_samples": 3
+    },
+    "total": 3,
+    "completed": 3,
+    "labeled": 3,
+    "hits": 3,
+    "hit_rate": 1.0,
+    "passed": true,
+    "reasons": []
+  },
+  "reports": [
+    {
+      "run_id": "4b22e330-219d-4f41-b193-1a29e4462c72",
+      "task_id": "c53ac1dd-7b18-42a6-8cb4-287f5ccfee60",
+      "candidate_version": "fake-payment-v2",
+      "cutoff": "2026-10-09T05:39:02.183083Z",
+      "baseline_evidence_id": "54805695-a3f3-4c21-a451-a1a802b4c3b1",
+      "candidate": {
+        "root_cause": {
+          "statement": "数据库连接池等待超时是当前故障线索，近期发布为待验证的诱因。",
+          "evidence_ids": [
+            "fc35f44a-d0f3-4662-89ac-5136aefbb01c",
+            "fb6c2622-9fc8-4113-8fc1-a54dc5b5f18a",
+            "830b4acf-2936-4f6f-96e5-72c8720dcca2"
+          ]
+        },
+        "findings": [
+          {
+            "statement": "认知图已提供 payment-service 的运行资源与依赖关系，需注意关系新鲜度。",
+            "evidence_ids": [
+              "5f7c0bca-1602-4dc5-8d81-9dda9b692d9a"
+            ]
+          },
+          {
+            "statement": "查询时间窗内存在近期变更，需要继续验证其与故障的因果关系。",
+            "evidence_ids": [
+              "fc35f44a-d0f3-4662-89ac-5136aefbb01c"
+            ]
+          },
+          {
+            "statement": "查询窗口内返回了 payment-service 的 5xx 指标。",
+            "evidence_ids": [
+              "fb6c2622-9fc8-4113-8fc1-a54dc5b5f18a"
+            ]
+          },
+          {
+            "statement": "日志返回数据库连接池等待超时。",
+            "evidence_ids": [
+              "830b4acf-2936-4f6f-96e5-72c8720dcca2"
+            ]
+          }
+        ],
+        "confidence": 0.7,
+        "uncertainties": [
+          "近期发布与故障的因果关系仍需核实；生产恢复以独立 Verifier 结果为准。"
+        ]
+      },
+      "baseline_root_cause": "数据库连接池等待超时是当前故障线索，近期发布为待验证的诱因。",
+      "baseline_hit": true,
+      "candidate_hit": true,
+      "misjudged": false,
+      "label_evidence_id": "fdb3ded8-a27e-4a7a-b919-d8a97ca60f43",
+      "baseline_tool_calls": 4,
+      "candidate_tool_calls": 4,
+      "baseline_elapsed_seconds": 0.202339,
+      "candidate_elapsed_seconds": 0.166185,
+      "observed_evidence_ids": [
+        "5f7c0bca-1602-4dc5-8d81-9dda9b692d9a",
+        "fc35f44a-d0f3-4662-89ac-5136aefbb01c",
+        "fb6c2622-9fc8-4113-8fc1-a54dc5b5f18a",
+        "830b4acf-2936-4f6f-96e5-72c8720dcca2"
+      ],
+      "status": "completed",
+      "error_code": null
+    },
+    {
+      "run_id": "5559ab31-a133-4e0f-8496-01eb09ba969a",
+      "task_id": "1269bd91-bea5-4a62-a450-056e930e1f4e",
+      "candidate_version": "fake-payment-v2",
+      "cutoff": "2026-10-09T05:39:03.770107Z",
+      "baseline_evidence_id": "fb50e191-5f12-4fb6-8e99-3455deafd8de",
+      "candidate": {
+        "root_cause": {
+          "statement": "数据库连接池等待超时是当前故障线索，近期发布为待验证的诱因。",
+          "evidence_ids": [
+            "f6e18e6f-51b6-4af5-bb5a-d225fe44ed30",
+            "5cadb035-a231-4f68-8430-f901c3c8e557",
+            "50796702-c7c2-4ba2-a419-84389cd8035f"
+          ]
+        },
+        "findings": [
+          {
+            "statement": "认知图已提供 payment-service 的运行资源与依赖关系，需注意关系新鲜度。",
+            "evidence_ids": [
+              "261ad2c7-9bb9-4d3b-a0d7-9c6245485dbb"
+            ]
+          },
+          {
+            "statement": "查询时间窗内存在近期变更，需要继续验证其与故障的因果关系。",
+            "evidence_ids": [
+              "f6e18e6f-51b6-4af5-bb5a-d225fe44ed30"
+            ]
+          },
+          {
+            "statement": "查询窗口内返回了 payment-service 的 5xx 指标。",
+            "evidence_ids": [
+              "5cadb035-a231-4f68-8430-f901c3c8e557"
+            ]
+          },
+          {
+            "statement": "日志返回数据库连接池等待超时。",
+            "evidence_ids": [
+              "50796702-c7c2-4ba2-a419-84389cd8035f"
+            ]
+          }
+        ],
+        "confidence": 0.7,
+        "uncertainties": [
+          "近期发布与故障的因果关系仍需核实；生产恢复以独立 Verifier 结果为准。"
+        ]
+      },
+      "baseline_root_cause": "数据库连接池等待超时是当前故障线索，近期发布为待验证的诱因。",
+      "baseline_hit": true,
+      "candidate_hit": true,
+      "misjudged": false,
+      "label_evidence_id": "5a9f15a5-7138-48f6-8a40-6be50bea49b6",
+      "baseline_tool_calls": 4,
+      "candidate_tool_calls": 4,
+      "baseline_elapsed_seconds": 0.173179,
+      "candidate_elapsed_seconds": 0.193494,
+      "observed_evidence_ids": [
+        "261ad2c7-9bb9-4d3b-a0d7-9c6245485dbb",
+        "f6e18e6f-51b6-4af5-bb5a-d225fe44ed30",
+        "5cadb035-a231-4f68-8430-f901c3c8e557",
+        "50796702-c7c2-4ba2-a419-84389cd8035f"
+      ],
+      "status": "completed",
+      "error_code": null
+    },
+    {
+      "run_id": "c84c2ecb-d7d5-4435-88da-6fd596b0f4da",
+      "task_id": "bba5e588-8f05-4ca2-925a-293c390869a5",
+      "candidate_version": "fake-payment-v2",
+      "cutoff": "2026-10-09T05:39:05.641453Z",
+      "baseline_evidence_id": "a23c23cb-bcf7-4ef8-a01e-4fa13e205850",
+      "candidate": {
+        "root_cause": {
+          "statement": "数据库连接池等待超时是当前故障线索，近期发布为待验证的诱因。",
+          "evidence_ids": [
+            "4e22cfec-eb7e-4c24-ba9d-c56d86aa8cb6",
+            "c50e0f76-b9ab-4281-a355-dade0401dab6",
+            "0e9028c8-fbb4-4c79-ba0d-24b2bb9abdf7"
+          ]
+        },
+        "findings": [
+          {
+            "statement": "认知图已提供 payment-service 的运行资源与依赖关系，需注意关系新鲜度。",
+            "evidence_ids": [
+              "9b66f1ce-5fb6-451a-82da-3c1e4af84fe3"
+            ]
+          },
+          {
+            "statement": "查询时间窗内存在近期变更，需要继续验证其与故障的因果关系。",
+            "evidence_ids": [
+              "4e22cfec-eb7e-4c24-ba9d-c56d86aa8cb6"
+            ]
+          },
+          {
+            "statement": "查询窗口内返回了 payment-service 的 5xx 指标。",
+            "evidence_ids": [
+              "c50e0f76-b9ab-4281-a355-dade0401dab6"
+            ]
+          },
+          {
+            "statement": "日志返回数据库连接池等待超时。",
+            "evidence_ids": [
+              "0e9028c8-fbb4-4c79-ba0d-24b2bb9abdf7"
+            ]
+          }
+        ],
+        "confidence": 0.7,
+        "uncertainties": [
+          "近期发布与故障的因果关系仍需核实；生产恢复以独立 Verifier 结果为准。"
+        ]
+      },
+      "baseline_root_cause": "数据库连接池等待超时是当前故障线索，近期发布为待验证的诱因。",
+      "baseline_hit": true,
+      "candidate_hit": true,
+      "misjudged": false,
+      "label_evidence_id": "9858f64b-85ea-4bca-929c-5a60a56e6df6",
+      "baseline_tool_calls": 4,
+      "candidate_tool_calls": 4,
+      "baseline_elapsed_seconds": 0.228025,
+      "candidate_elapsed_seconds": 0.168304,
+      "observed_evidence_ids": [
+        "9b66f1ce-5fb6-451a-82da-3c1e4af84fe3",
+        "4e22cfec-eb7e-4c24-ba9d-c56d86aa8cb6",
+        "c50e0f76-b9ab-4281-a355-dade0401dab6",
+        "0e9028c8-fbb4-4c79-ba0d-24b2bb9abdf7"
+      ],
+      "status": "completed",
+      "error_code": null
+    }
+  ],
+  "metrics": {
+    "samples": [
+      {
+        "task_id": "c53ac1dd-7b18-42a6-8cb4-287f5ccfee60",
+        "rca_correct": true,
+        "runbook_attempted": true,
+        "runbook_hit": false,
+        "execution_attempted": true,
+        "execution_verified": true,
+        "approval_decisions": 1,
+        "approval_rejections": 0,
+        "human_takeover": false,
+        "alert": true,
+        "false_alert": false,
+        "mttr_seconds": 707342.990454,
+        "tool_calls": 18,
+        "verification_attempts": 1,
+        "verification_failures": 0,
+        "automated": true,
+        "evidence_ids": [
+          "c54a3722-d8c9-43f2-a92b-f3f3b84b5f54",
+          "57166e84-ceab-4cf2-8bec-6a7c6449e8c4",
+          "7b15a63e-1fdc-45fa-aded-546e766cb089",
+          "5f7c0bca-1602-4dc5-8d81-9dda9b692d9a",
+          "0f2a7b22-daff-4281-87fc-f8030041a2b5",
+          "ed67309d-f355-4485-8b9c-d6bf43984efb",
+          "fc35f44a-d0f3-4662-89ac-5136aefbb01c",
+          "16a21b98-024b-49c7-885a-8f4dde617c33",
+          "8eb9713e-d436-49e1-91f2-790ece953bd4",
+          "fb6c2622-9fc8-4113-8fc1-a54dc5b5f18a",
+          "3a3b64a8-477d-462b-b899-a84d983d631a",
+          "9d9cfabc-425d-47e5-846b-0834e422e1f8",
+          "830b4acf-2936-4f6f-96e5-72c8720dcca2",
+          "5fbd3c7e-e2bf-47b9-aced-5369c582cbf7",
+          "0d9af174-2ada-4e17-967d-ef3cfbde0c18",
+          "54805695-a3f3-4c21-a451-a1a802b4c3b1",
+          "af5f159b-5e2d-4949-bf61-f4820b078af0",
+          "a70550c4-7ba6-41d4-a0cd-2047ecda654a",
+          "40a74472-fda3-4a17-aa6a-3d6da9400936",
+          "580e3900-7768-466b-a4de-0a009636128c",
+          "69702788-a120-4b87-99c5-29dd8b6f732f",
+          "e0ee7a87-cb30-475b-b7cf-08b05d131e03",
+          "83e1e8b3-fe34-4798-9421-6ff4668fd3fa",
+          "c9ca87f8-9768-4bcc-8ecf-61961f27fd28",
+          "0a14d4d5-241a-4445-ad53-ca50ea699e48",
+          "bef05977-1ef7-48d0-a283-8be90651a323",
+          "dae41d0a-1fbc-43e1-925b-82c86d3bd119",
+          "714a5628-7018-477e-b262-b99469b28cf8",
+          "5b8e9ed0-1409-48f9-8c1c-6fd2d79247da",
+          "61a5a673-bb53-47d0-93ec-549540737ab9",
+          "90263ac5-f5d6-4027-96df-a88de8b2691d",
+          "60f29b2d-1e25-469a-96ce-ebd4096af6cd",
+          "1804e17a-2d05-4fa3-9973-61275fc262b4",
+          "71ab15ea-766b-4770-a8c7-4e1d6f23e8ed",
+          "11836e25-d9d9-4c85-aad1-9cde7ee64541",
+          "b901b584-62bb-4a84-9596-544070165586",
+          "11824b5d-693d-4d8c-a24b-8882083e0cff",
+          "125792fe-ff58-4c36-afb4-096524226025",
+          "4273c87b-9266-4253-910e-c430d34f9588",
+          "13d1e24d-37e4-46fc-937d-abf3fcef3249",
+          "30b3e8a3-97fa-495a-9bc0-088356102df2",
+          "dea051fe-dfbf-407a-90ed-d3533963a6d5",
+          "b8b225a2-6c4c-4f11-b7d0-a937e6cb9df9",
+          "4d002222-109e-43b8-aeea-fa29119914df",
+          "fdb3ded8-a27e-4a7a-b919-d8a97ca60f43"
+        ],
+        "history_ids": [
+          "adce9378-9cdc-4188-9fef-ca8396a0d552",
+          "4b09ef6f-522b-40f8-aeb6-49f0bc44d5e9",
+          "354f9877-f535-4a3e-8ed8-5eb9677dcea6",
+          "b2bec6fd-4d98-4179-90ea-45f1a77b8b78",
+          "df757666-125c-4e53-9634-440947b86e53",
+          "bc802ece-b1b6-492f-9b97-e6781ddefccc",
+          "1a1579d7-5c4e-48f3-ab58-27be3ed4ad2f",
+          "a4ecc66d-2df5-4b74-8ce0-157985636874",
+          "d53ca472-2b39-4584-ac10-813eb805d123",
+          "53f897fd-028e-4bb0-9cb6-c7630e4d0403",
+          "91cb6448-3a8b-4088-b47a-f4941bad658e",
+          "701f1c9f-58b3-4da8-8a78-96af74401d0e"
+        ]
+      },
+      {
+        "task_id": "1269bd91-bea5-4a62-a450-056e930e1f4e",
+        "rca_correct": true,
+        "runbook_attempted": true,
+        "runbook_hit": false,
+        "execution_attempted": true,
+        "execution_verified": true,
+        "approval_decisions": 1,
+        "approval_rejections": 0,
+        "human_takeover": false,
+        "alert": true,
+        "false_alert": false,
+        "mttr_seconds": 707344.773182,
+        "tool_calls": 18,
+        "verification_attempts": 1,
+        "verification_failures": 0,
+        "automated": true,
+        "evidence_ids": [
+          "afd2a618-2fba-4224-b867-c5fcbf3b7a9d",
+          "976794aa-8722-4d73-831a-716b63c6d2ab",
+          "e48faeb9-e15d-4480-9728-ac56c3d57f61",
+          "261ad2c7-9bb9-4d3b-a0d7-9c6245485dbb",
+          "53991521-075e-48e5-8fb1-baca9856827f",
+          "7e9c58f2-be4c-4f01-9d03-237cd1ef8d72",
+          "f6e18e6f-51b6-4af5-bb5a-d225fe44ed30",
+          "8a4eb452-1353-4c77-ba45-d715a4d56fae",
+          "33687238-4530-4e99-a064-45f3728ee918",
+          "5cadb035-a231-4f68-8430-f901c3c8e557",
+          "d3beeda2-af1c-42e1-8c8c-7e455818c9c8",
+          "c3892740-0abf-492d-936f-d01adc5677ee",
+          "50796702-c7c2-4ba2-a419-84389cd8035f",
+          "078aab9b-d1ef-4b05-b47e-6491ac261e52",
+          "22afa8d4-7799-4b10-a219-86091e4c5afb",
+          "fb50e191-5f12-4fb6-8e99-3455deafd8de",
+          "c6df38a3-54c2-4b44-8449-a7690b4d2b64",
+          "fa79f6d0-a1cb-418f-aed0-073be3f9f2be",
+          "43be272c-a727-41ec-8f79-8f3c291c520a",
+          "47cca668-08f7-408c-855d-8a2e7d995632",
+          "f27b2d47-0aa3-435a-98a1-3fdfe3ac7f4b",
+          "f39818f7-82f9-4a41-b1e7-ab9d63a68e61",
+          "f6c301be-2666-4bc3-af70-112c20e68fe4",
+          "448a14e8-afa2-4823-8bb8-84eafb730f52",
+          "03982e75-3463-4412-8d87-640de14786f1",
+          "a9eb9ccf-7eaf-410a-b2ea-9c0ed2edbda1",
+          "fc768523-b4b3-401b-b561-7af247b5d700",
+          "8feb7633-4bb0-434d-908c-43f3faf1b738",
+          "dba84616-5d6f-4f1b-b7f7-c09937f7e5f2",
+          "e26f26d4-f97b-4707-800b-006749098e2b",
+          "2e8ab12b-759b-497e-a355-7b3112c215a6",
+          "c050de8c-e3e9-42ac-8d18-dca52b8f03ef",
+          "c13c7f82-5f1a-4bd5-9a18-8879d64409c9",
+          "c1fe830c-e778-44c6-9231-09dc81b3e687",
+          "15af61ee-36e1-44e4-ab3c-3424a16ddccd",
+          "348232d4-3191-4fd8-bd57-09b5c1165eba",
+          "cc40ec96-c434-4c48-9e20-e4f3924f6a7e",
+          "117fd3bb-d523-4176-a92b-81697c1ae54b",
+          "2069d438-d828-4d80-8e42-a0b0c90cc378",
+          "2527b4aa-1a5c-4e4f-a640-a596d9153308",
+          "8206f11d-63fb-4f9b-a9a4-2db42ae48e92",
+          "85fab81c-25dc-4825-bf62-e609180f005a",
+          "5fc25636-065f-47e3-9cda-f30b50f26497",
+          "31150696-0cad-4189-83e8-92bd91e8b0ba",
+          "5a9f15a5-7138-48f6-8a40-6be50bea49b6"
+        ],
+        "history_ids": [
+          "05bc83ad-1dd6-46b8-b951-6e3e76d4e2a7",
+          "4bf5323e-25f7-4dc0-b3d9-17aeac6f9097",
+          "5d7bce55-9297-43c9-80da-ab1728a70256",
+          "8b6325a5-5b9f-4ac1-945a-cc29311c8cac",
+          "84095989-38c7-4f6a-8ad5-8f99deb5980a",
+          "dd7679ef-12b5-4fad-89b2-8ddf7ad6beac",
+          "e148eb63-6853-4402-baa2-6091d0d77206",
+          "f4c2abb5-75cd-43b3-bb4f-a500db4da71c",
+          "f945ab50-1091-4f1f-b8f6-44c1a1c43bcb",
+          "de66bde3-62f5-4b59-9e91-75e196e68db7",
+          "db321ae6-4a50-4436-8939-4dcac1d279f6",
+          "3581cbc6-ea39-4d56-ac04-0257ea64754f"
+        ]
+      },
+      {
+        "task_id": "bba5e588-8f05-4ca2-925a-293c390869a5",
+        "rca_correct": true,
+        "runbook_attempted": true,
+        "runbook_hit": false,
+        "execution_attempted": true,
+        "execution_verified": true,
+        "approval_decisions": 1,
+        "approval_rejections": 0,
+        "human_takeover": false,
+        "alert": true,
+        "false_alert": false,
+        "mttr_seconds": 707346.546556,
+        "tool_calls": 18,
+        "verification_attempts": 1,
+        "verification_failures": 0,
+        "automated": true,
+        "evidence_ids": [
+          "57ce317a-d98c-4bda-a961-c6a2a79b5b6d",
+          "61033dbc-6ee8-49b1-ab1a-3a24130acf10",
+          "bd8e8599-20e9-4888-be78-3b063e3997bb",
+          "9b66f1ce-5fb6-451a-82da-3c1e4af84fe3",
+          "fc14b770-d71a-4e5c-af9e-094194c1f65d",
+          "976384b5-e550-4b75-87de-5772dd4f73bd",
+          "4e22cfec-eb7e-4c24-ba9d-c56d86aa8cb6",
+          "a7448c5b-1475-41c6-a0d7-0b4a1e43ddbb",
+          "737719e5-10c6-4e33-b7c9-46e03121eec5",
+          "c50e0f76-b9ab-4281-a355-dade0401dab6",
+          "c57d2d38-1fd3-46f8-a590-5d61357c3b4c",
+          "3ab5e097-1a34-4f4f-9fba-a2bc86b1ea1e",
+          "0e9028c8-fbb4-4c79-ba0d-24b2bb9abdf7",
+          "38c26746-bba8-4a6e-90bf-e5a8e98b3849",
+          "450e4f91-c07b-4ca5-8b1b-3d896ea3a5bd",
+          "a23c23cb-bcf7-4ef8-a01e-4fa13e205850",
+          "640ef803-b361-4600-814f-097749c6b096",
+          "baed8496-dacc-4a24-aeb7-cd0eb328ac16",
+          "e59e17ac-c5ac-459f-aa79-ce3ec3f956bc",
+          "4f397010-ede1-4167-8ffd-6931aedd996f",
+          "abacb757-57d4-412c-9250-a64d1ebe7b7b",
+          "77297475-6075-4e7e-8aaa-d3039e511931",
+          "e1f87b25-90fc-4d8e-b4f5-3a9f4b64764d",
+          "f2e62458-dbb6-4df0-9e72-bb0e69d1e86b",
+          "b4b8ad4e-70fb-45b8-bea1-e946b34dc4f3",
+          "6d14f825-8884-453d-b4b2-e6042e18916a",
+          "9fc4f010-441a-4043-a6bc-5ec6d919c5a0",
+          "54ff6a7e-f8b5-4f28-baa2-33e59e8cf9cd",
+          "126fbd5b-2a2b-4ca6-8b43-96e4ae5a9a76",
+          "85b91f65-899c-466b-97a9-2497026b4b9b",
+          "929e9502-c27e-43c3-aed8-2d478bd3ab92",
+          "7e7479be-9f40-4e5d-8a1c-d263e58d5f9e",
+          "935b7275-9f65-45e6-9039-2472f768e416",
+          "bebda15e-35a2-4f85-bc77-fda93254851e",
+          "f70b3d64-87de-4c00-a8b1-761a24ee88ce",
+          "91b34280-396e-4b4a-b22d-0faeaef6d3bf",
+          "118d003c-01cc-4256-965e-f4c10d56c503",
+          "f478f1b7-3bd3-4878-89c2-ce8e550b46af",
+          "2e73d18e-febc-4493-829c-98ab8263221c",
+          "5ebec574-8edf-4e14-aa48-e6a58a387bc3",
+          "afc48ae5-e76c-4bd1-9cff-a31c269bebeb",
+          "6f4003af-0ca3-48e2-b64b-c156b0957896",
+          "59a6835d-8390-443b-a036-e37c4d34ffed",
+          "74a8aec7-1270-4b08-8957-0d62f3966277",
+          "9858f64b-85ea-4bca-929c-5a60a56e6df6"
+        ],
+        "history_ids": [
+          "266ec9f0-005d-42ae-9010-b630eefeb119",
+          "170b7d33-0402-4ad1-9732-fc5fa15b70e9",
+          "6e39d006-11ae-4d12-abfc-65402f41addc",
+          "ab3b9c79-1560-43d7-9d49-9c35e36e5b0a",
+          "9bcce511-7b7b-431f-829c-0202ade1c19a",
+          "14ccb4b9-3c03-4bd8-a539-87ca547c8fe0",
+          "9426801f-510f-4c80-a3f3-ab17a570903a",
+          "1f6bdb81-871e-400f-86ee-b19da71bec17",
+          "ebdf65e9-e089-4f9d-84c7-b1c857e2e598",
+          "96b382d7-914c-41d5-9192-766f1480f0e9",
+          "9326654a-720d-43e8-ad9f-58f6dc5276d1",
+          "5e24b17a-ceb1-4c0c-a78f-70987230041b"
+        ]
+      }
+    ],
+    "metrics": [
+      {
+        "name": "rca_hit_rate",
+        "label": "RCA命中率",
+        "numerator": 3.0,
+        "denominator": 3,
+        "value": 1.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "runbook_hit_rate",
+        "label": "Runbook命中率",
+        "numerator": 0.0,
+        "denominator": 3,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "automatic_success_rate",
+        "label": "自动处理成功率",
+        "numerator": 3.0,
+        "denominator": 3,
+        "value": 1.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "approval_rejection_rate",
+        "label": "审批拒绝率",
+        "numerator": 0.0,
+        "denominator": 3,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "human_takeover_rate",
+        "label": "人工接管率",
+        "numerator": 0.0,
+        "denominator": 3,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "false_alert_rate",
+        "label": "误报率",
+        "numerator": 0.0,
+        "denominator": 3,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "mean_mttr",
+        "label": "平均MTTR",
+        "numerator": 2122034.310192,
+        "denominator": 3,
+        "value": 707344.770064,
+        "unit": "seconds"
+      },
+      {
+        "name": "mean_tool_calls",
+        "label": "平均Tool Call",
+        "numerator": 54.0,
+        "denominator": 3,
+        "value": 18.0,
+        "unit": "calls"
+      },
+      {
+        "name": "verification_failure_rate",
+        "label": "验证失败率",
+        "numerator": 0.0,
+        "denominator": 3,
+        "value": 0.0,
+        "unit": "ratio"
+      },
+      {
+        "name": "automation_coverage",
+        "label": "自动化覆盖率",
+        "numerator": 3.0,
+        "denominator": 3,
+        "value": 1.0,
+        "unit": "ratio"
+      }
+    ]
+  },
+  "replay_live_calls": 0,
+  "external_network_attempts": 0,
+  "real_environment_verified": false,
+  "production_writes_enabled": false
+}

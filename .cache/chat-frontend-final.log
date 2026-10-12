@@ -1,0 +1,42 @@
+$ node scripts/generate-api.mjs --check
+[90m@hey-api/openapi-ts v0.99.0[39m
+
+[90m[Job 1] [39m[90m~[39m [36mGenerating...[39m
+[90m[Job 1] [39m[36m  [1] [39mF:\Weipai AI Ops Brain\.cache\api-generation-xQd9RN\openapi.json
+[90m[Job 1] [39m[32m✓[39m [96m./.cache\api-generation-xQd9RN\generated[39m [90m· 4 files · 265ms[39m
+OpenAPI 契约与 16 个客户端文件逐字节一致。
+$ eslint . --max-warnings 0
+$ tsc -b --pretty false
+$ vitest run
+
+ RUN  v5.0.3 F:/Weipai AI Ops Brain/frontend
+
+
+ Test Files  8 passed (8)
+      Tests  132 passed (132)
+   Start at  08:11:17
+   Duration  36.11s (tests 47%, import 38%, environment 7%, setup 6%, transform 2%)
+
+$ tsc -b && vite build
+vite v8.3.3 building client environment for production...
+transforming...
+✓ 3191 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                             1.37 kB │ gzip:   0.50 kB
+dist/assets/index-iuLBN5Ou.css             18.69 kB │ gzip:   5.09 kB
+dist/assets/ui-qgJN88Op.js                  0.13 kB │ gzip:   0.12 kB
+dist/assets/ui-B34PiX7e.js                  0.46 kB │ gzip:   0.29 kB
+dist/assets/rolldown-runtime-D2aABDIb.js    0.68 kB │ gzip:   0.41 kB
+dist/assets/ui-C0UaT5IU.js                 13.71 kB │ gzip:   5.94 kB
+dist/assets/ui-DmdeaKFQ.js                 17.02 kB │ gzip:   6.64 kB
+dist/assets/vendor-Bw_IMsMP.js             39.80 kB │ gzip:  11.67 kB
+dist/assets/ui-N5hmqWaf.js                 97.65 kB │ gzip:  31.02 kB
+dist/assets/index-BKlUp5WY.js             141.91 kB │ gzip:  40.72 kB
+dist/assets/ui-CNyWc0sp.js                190.62 kB │ gzip:  60.07 kB
+dist/assets/ui-MvCKbgPX.js                224.51 kB │ gzip:  64.80 kB
+dist/assets/react-C-Qar-KD.js             260.52 kB │ gzip:  82.84 kB
+dist/assets/ui-1T2_-2AT.js                310.83 kB │ gzip: 105.60 kB
+
+✓ built in 732ms
+前端检查全部通过。

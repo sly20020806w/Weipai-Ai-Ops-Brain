@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="4" failures="0" skipped="0" tests="9" time="3.360" timestamp="2026-10-09T08:38:12.596469+08:00" hostname="Dragon"><testcase classname="tests.test_e2e_guard" name="test_socket_and_dns_block_before_connect[address0]" time="0.006" /><testcase classname="tests.test_e2e_guard" name="test_socket_and_dns_block_before_connect[address1]" time="0.001" /><testcase classname="tests.test_e2e_guard" name="test_real_http_transport_blocked_before_io" time="0.102" /><testcase classname="tests.test_e2e_guard" name="test_temporal_native_transport_requires_local_endpoint[example.invalid:7233]" time="0.001" /><testcase classname="tests.test_e2e_guard" name="test_temporal_native_transport_requires_local_endpoint[127.0.0.1:0]" time="0.000" /><testcase classname="tests.test_e2e_guard" name="test_temporal_native_transport_requires_local_endpoint[127.0.0.1:65536]" time="0.000" /><testcase classname="tests.test_e2e_integration" name="test_payment_alert_closed_loop[closed-loop]" time="0.002"><error message="failed on setup with &quot;AssertionError: E2E 禁止访问本机数据库/Temporal 以外的网络&quot;">.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: in setup
+    return super().setup()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:934: in pytest_fixture_setup
+    runner = request.getfixturevalue(runner_fixture_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: in pytest_fixture_setup
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:1039: in _scoped_runner
+    ).__enter__()
+      ^^^^^^^^^^^
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\runners.py:58: in __enter__
+    self._lazy_init()
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\runners.py:137: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\events.py:823: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\events.py:720: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\proactor_events.py:640: in __init__
+    self._make_self_pipe()
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\proactor_events.py:787: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+tests\e2e_support.py:29: in connect
+    self.check(address)
+tests\e2e_support.py:18: in check
+    raise AssertionError("E2E 禁止访问本机数据库/Temporal 以外的网络")
+E   AssertionError: E2E 禁止访问本机数据库/Temporal 以外的网络</error><error message="failed on teardown with &quot;AssertionError: 业务曾尝试真实联网，即使捕获异常也不能通过 E2E&#10;assert ['socket/DNS'] == []&#10;  &#10;  Left contains one more item: 'socket/DNS'&#10;  Use -v to get more diff&quot;">tests\test_e2e_integration.py:105: in network_guard
+    assert guard.rejected == [], "业务曾尝试真实联网，即使捕获异常也不能通过 E2E"
+E   AssertionError: 业务曾尝试真实联网，即使捕获异常也不能通过 E2E
+E   assert ['socket/DNS'] == []
+E     
+E     Left contains one more item: 'socket/DNS'
+E     Use -v to get more diff</error></testcase><testcase classname="tests.test_e2e_integration" name="test_payment_alert_closed_loop[approval-rejected]" time="0.001"><error message="failed on setup with &quot;AssertionError&quot;">.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: in setup
+    return super().setup()
+           ^^^^^^^^^^^^^^^
+E   AssertionError</error></testcase><testcase classname="tests.test_e2e_integration" name="test_payment_alert_closed_loop[verification-unrecovered]" time="0.001"><error message="failed on setup with &quot;AssertionError&quot;">.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: in setup
+    return super().setup()
+           ^^^^^^^^^^^^^^^
+E   AssertionError</error></testcase></testsuite></testsuites>

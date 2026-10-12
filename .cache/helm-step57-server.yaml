@@ -1,0 +1,1455 @@
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: weipai-ops-reader
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+automountServiceAccountToken: false
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: weipai-ops-executor
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+automountServiceAccountToken: false
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: weipai-ops-console
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+automountServiceAccountToken: false
+---
+# Source: weipai-ops/charts/temporal/templates/server-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: "weipai-temporal-config"
+  labels:
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+data:
+  config_template.yaml: |-
+    # enable-template
+    log:
+      stdout: true
+      level: "debug,info"
+
+    persistence:
+      datastores:
+        default:
+          sql:
+            connectAddr: postgres.platform.svc:5432
+            connectProtocol: tcp
+            databaseName: temporal
+            password: {{ env "TEMPORAL_DEFAULT_STORE_PASSWORD" | quote }}
+            pluginName: postgres12
+            user: temporal
+        visibility:
+          sql:
+            connectAddr: postgres.platform.svc:5432
+            connectProtocol: tcp
+            databaseName: temporal_visibility
+            password: {{ env "TEMPORAL_VISIBILITY_STORE_PASSWORD" | quote }}
+            pluginName: postgres12
+            user: temporal
+      defaultStore: default
+      numHistoryShards: 512
+      visibilityStore: visibility
+
+    global:
+      membership:
+        name: temporal
+        maxJoinDuration: 30s
+        broadcastAddress: {{ env "POD_IP" | quote }}
+
+      pprof:
+        port: 7936
+
+      metrics:
+        tags:
+          type: {{ env "TEMPORAL_SERVICES" | quote }}
+        prometheus:
+          listenAddress: 0.0.0.0:9090
+          timerType: histogram
+
+    services:
+      frontend:
+        rpc:
+          grpcPort: 7233
+          httpPort: 7243
+          membershipPort: 6933
+          bindOnIP: "0.0.0.0"
+
+      history:
+        rpc:
+          grpcPort: 7234
+          membershipPort: 6934
+          bindOnIP: "0.0.0.0"
+
+      matching:
+        rpc:
+          grpcPort: 7235
+          membershipPort: 6935
+          bindOnIP: "0.0.0.0"
+
+      worker:
+        rpc:
+          membershipPort: 6939
+          bindOnIP: "0.0.0.0"
+
+    clusterMetadata:
+      enableGlobalNamespace: false
+      failoverVersionIncrement: 10
+      masterClusterName: "active"
+      currentClusterName: "active"
+      clusterInformation:
+        active:
+          enabled: true
+          initialFailoverVersion: 1
+          rpcName: "temporal-frontend"
+          rpcAddress: "127.0.0.1:7233"
+          httpAddress: "127.0.0.1:7243"
+
+    dcRedirectionPolicy:
+      policy: "noop"
+      toDC: ""
+
+    archival:
+      status: "disabled"
+    publicClient:
+      hostPort: "weipai-temporal-frontend:7233"
+
+    dynamicConfigClient:
+      filepath: "/etc/temporal/dynamic_config/dynamic_config.yaml"
+      pollInterval: "10s"
+---
+# Source: weipai-ops/charts/temporal/templates/server-dynamicconfigmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: "weipai-temporal-dynamic-config"
+  labels:
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+data:
+  dynamic_config.yaml: |-
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: weipai-ops-weipai-lint-1906a9a2-namespaces
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+rules:
+  - apiGroups: [""]
+    resources: [namespaces]
+    verbs: [get, list]
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: weipai-ops-weipai-lint-1906a9a2-namespaces
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+subjects:
+  - {kind: ServiceAccount, name: weipai-ops-reader, namespace: weipai-lint-1906a9a2}
+roleRef:
+  {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: weipai-ops-weipai-lint-1906a9a2-namespaces}
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: weipai-ops-weipai-lint-1906a9a2-reader
+  namespace: weipai-lint-1906a9a2
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list]
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: weipai-ops-weipai-lint-1906a9a2-reader
+  namespace: weipai-lint-1906a9a2
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+subjects:
+  - {kind: ServiceAccount, name: weipai-ops-reader, namespace: weipai-lint-1906a9a2}
+roleRef:
+  {apiGroup: rbac.authorization.k8s.io, kind: Role, name: weipai-ops-weipai-lint-1906a9a2-reader}
+---
+# Source: weipai-ops/charts/temporal/templates/server-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-frontend
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+spec:
+  type: ClusterIP
+  ports:
+    - port: 7233
+      targetPort: rpc
+      # For Istio service mesh - make sure all ports are defined here and in the deployment:
+      # Also for Istio - make sure to set the `appProtocol` property, see:
+      # https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection
+      # Note when two services expose the same port, it is necessary that the appProtocol of both is the same.
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-rpc
+    - port: 7243
+      targetPort: http
+      appProtocol: http
+      protocol: TCP
+      name: http
+      # TODO: Allow customizing the node HTTP port
+  selector:
+    app.kubernetes.io/name: temporal
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/component: frontend
+---
+# Source: weipai-ops/charts/temporal/templates/server-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-frontend-headless
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+    app.kubernetes.io/headless: 'true'
+  annotations:
+    # Use this annotation in addition to the actual field below because the
+    # annotation will stop being respected soon but the field is broken in
+    # some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    prometheus.io/job: temporal-frontend
+    prometheus.io/scrape: 'true'
+    prometheus.io/scheme: http
+    prometheus.io/port: "9090"
+
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  # For Istio service mesh - make sure all ports are defined here and in the deployment:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  # Also for Istio - make sure to set the `appProtocol` property, see:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection
+  # Note that only the monitoring port is used for discovery (by prometheus).
+  # The other ports are listed here solely to allow Istio to configure itself to intercept traffic.
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  ports:
+    - port: 7233
+      targetPort: rpc
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-rpc
+    - port: 6933
+      targetPort: membership
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-membership
+    - port: 9090
+      targetPort: metrics
+      appProtocol: http
+      protocol: TCP
+      name: metrics
+  selector:
+    app.kubernetes.io/name: temporal
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/component: frontend
+---
+# Source: weipai-ops/charts/temporal/templates/server-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-matching-headless
+  labels:
+    app.kubernetes.io/component: matching
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+    app.kubernetes.io/headless: 'true'
+  annotations:
+    # Use this annotation in addition to the actual field below because the
+    # annotation will stop being respected soon but the field is broken in
+    # some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    prometheus.io/job: temporal-matching
+    prometheus.io/scrape: 'true'
+    prometheus.io/scheme: http
+    prometheus.io/port: "9090"
+
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  # For Istio service mesh - make sure all ports are defined here and in the deployment:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  # Also for Istio - make sure to set the `appProtocol` property, see:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection
+  # Note that only the monitoring port is used for discovery (by prometheus).
+  # The other ports are listed here solely to allow Istio to configure itself to intercept traffic.
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  ports:
+    - port: 7235
+      targetPort: rpc
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-rpc
+    - port: 6935
+      targetPort: membership
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-membership
+    - port: 9090
+      targetPort: metrics
+      appProtocol: http
+      protocol: TCP
+      name: metrics
+  selector:
+    app.kubernetes.io/name: temporal
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/component: matching
+---
+# Source: weipai-ops/charts/temporal/templates/server-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-history-headless
+  labels:
+    app.kubernetes.io/component: history
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+    app.kubernetes.io/headless: 'true'
+  annotations:
+    # Use this annotation in addition to the actual field below because the
+    # annotation will stop being respected soon but the field is broken in
+    # some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    prometheus.io/job: temporal-history
+    prometheus.io/scrape: 'true'
+    prometheus.io/scheme: http
+    prometheus.io/port: "9090"
+
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  # For Istio service mesh - make sure all ports are defined here and in the deployment:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  # Also for Istio - make sure to set the `appProtocol` property, see:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection
+  # Note that only the monitoring port is used for discovery (by prometheus).
+  # The other ports are listed here solely to allow Istio to configure itself to intercept traffic.
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  ports:
+    - port: 7234
+      targetPort: rpc
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-rpc
+    - port: 6934
+      targetPort: membership
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-membership
+    - port: 9090
+      targetPort: metrics
+      appProtocol: http
+      protocol: TCP
+      name: metrics
+  selector:
+    app.kubernetes.io/name: temporal
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/component: history
+---
+# Source: weipai-ops/charts/temporal/templates/server-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-worker-headless
+  labels:
+    app.kubernetes.io/component: worker
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+    app.kubernetes.io/headless: 'true'
+  annotations:
+    # Use this annotation in addition to the actual field below because the
+    # annotation will stop being respected soon but the field is broken in
+    # some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    prometheus.io/job: temporal-worker
+    prometheus.io/scrape: 'true'
+    prometheus.io/scheme: http
+    prometheus.io/port: "9090"
+
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  # For Istio service mesh - make sure all ports are defined here and in the deployment:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  # Also for Istio - make sure to set the `appProtocol` property, see:
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/protocol-selection/#explicit-protocol-selection
+  # Note that only the monitoring port is used for discovery (by prometheus).
+  # The other ports are listed here solely to allow Istio to configure itself to intercept traffic.
+  # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+  ports:
+    - port: 7239
+      targetPort: rpc
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-rpc
+    - port: 6939
+      targetPort: membership
+      appProtocol: tcp
+      protocol: TCP
+      name: grpc-membership
+    - port: 9090
+      targetPort: metrics
+      appProtocol: http
+      protocol: TCP
+      name: metrics
+  selector:
+    app.kubernetes.io/name: temporal
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/component: worker
+---
+# Source: weipai-ops/templates/backend.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: weipai-ops-api
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: weipai, app.kubernetes.io/component: api}
+  ports: [{name: http, port: 8000, targetPort: http}]
+---
+# Source: weipai-ops/templates/frontend.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: weipai-ops-frontend
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: weipai, app.kubernetes.io/component: frontend}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+# Source: weipai-ops/charts/temporal/templates/server-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-frontend
+  annotations:
+    
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: temporal
+      app.kubernetes.io/instance: weipai
+      app.kubernetes.io/component: frontend
+  template:
+    metadata:
+      annotations:
+        checksum/config: a5f1377408c71b4183ed819d3d20228edb77c3fee1e1ed09e1c93d30411b766b
+        prometheus.io/job: temporal-frontend
+        prometheus.io/scrape: 'true'
+        prometheus.io/scheme: http
+        prometheus.io/port: '9090'
+        
+      labels:
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - name: temporal-frontend
+          image: "temporalio/server:1.31.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SERVICES
+              value: frontend
+            - name: TEMPORAL_SERVICES
+              value: frontend
+            - name: TEMPORAL_SERVER_CONFIG_FILE_PATH
+              value: /etc/temporal/config/config_template.yaml
+            - name: TEMPORAL_DEFAULT_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+            - name: TEMPORAL_VISIBILITY_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          # For Istio service mesh - make sure ports are defined here and in the headless service, see:
+          # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+          ports:
+            - name: rpc
+              containerPort: 7233
+              protocol: TCP
+            - name: membership
+              containerPort: 6933
+              protocol: TCP
+            - name: http
+              containerPort: 7243
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 150
+            tcpSocket:
+              port: rpc
+          readinessProbe:
+            tcpSocket:
+              port: rpc
+          volumeMounts:
+            - name: config
+              mountPath: /etc/temporal/config/config_template.yaml
+              subPath: config_template.yaml
+            - name: dynamic-config
+              mountPath: /etc/temporal/dynamic_config
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      volumes:
+        - name: config
+          configMap:
+            name: "weipai-temporal-config"
+        - name: dynamic-config
+          configMap:
+            name: "weipai-temporal-dynamic-config"
+            items:
+            - key: dynamic_config.yaml
+              path: dynamic_config.yaml
+      terminationGracePeriodSeconds:
+---
+# Source: weipai-ops/charts/temporal/templates/server-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-history
+  annotations:
+    
+  labels:
+    app.kubernetes.io/component: history
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: temporal
+      app.kubernetes.io/instance: weipai
+      app.kubernetes.io/component: history
+  template:
+    metadata:
+      annotations:
+        checksum/config: a5f1377408c71b4183ed819d3d20228edb77c3fee1e1ed09e1c93d30411b766b
+        prometheus.io/job: temporal-history
+        prometheus.io/scrape: 'true'
+        prometheus.io/scheme: http
+        prometheus.io/port: '9090'
+        
+      labels:
+        app.kubernetes.io/component: history
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - name: temporal-history
+          image: "temporalio/server:1.31.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SERVICES
+              value: history
+            - name: TEMPORAL_SERVICES
+              value: history
+            - name: TEMPORAL_SERVER_CONFIG_FILE_PATH
+              value: /etc/temporal/config/config_template.yaml
+            - name: TEMPORAL_DEFAULT_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+            - name: TEMPORAL_VISIBILITY_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          # For Istio service mesh - make sure ports are defined here and in the headless service, see:
+          # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+          ports:
+            - name: rpc
+              containerPort: 7234
+              protocol: TCP
+            - name: membership
+              containerPort: 6934
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 150
+            tcpSocket:
+              port: rpc
+          readinessProbe:
+            tcpSocket:
+              port: rpc
+          volumeMounts:
+            - name: config
+              mountPath: /etc/temporal/config/config_template.yaml
+              subPath: config_template.yaml
+            - name: dynamic-config
+              mountPath: /etc/temporal/dynamic_config
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      volumes:
+        - name: config
+          configMap:
+            name: "weipai-temporal-config"
+        - name: dynamic-config
+          configMap:
+            name: "weipai-temporal-dynamic-config"
+            items:
+            - key: dynamic_config.yaml
+              path: dynamic_config.yaml
+      terminationGracePeriodSeconds:
+---
+# Source: weipai-ops/charts/temporal/templates/server-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-matching
+  annotations:
+    
+  labels:
+    app.kubernetes.io/component: matching
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: temporal
+      app.kubernetes.io/instance: weipai
+      app.kubernetes.io/component: matching
+  template:
+    metadata:
+      annotations:
+        checksum/config: a5f1377408c71b4183ed819d3d20228edb77c3fee1e1ed09e1c93d30411b766b
+        prometheus.io/job: temporal-matching
+        prometheus.io/scrape: 'true'
+        prometheus.io/scheme: http
+        prometheus.io/port: '9090'
+        
+      labels:
+        app.kubernetes.io/component: matching
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - name: temporal-matching
+          image: "temporalio/server:1.31.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SERVICES
+              value: matching
+            - name: TEMPORAL_SERVICES
+              value: matching
+            - name: TEMPORAL_SERVER_CONFIG_FILE_PATH
+              value: /etc/temporal/config/config_template.yaml
+            - name: TEMPORAL_DEFAULT_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+            - name: TEMPORAL_VISIBILITY_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          # For Istio service mesh - make sure ports are defined here and in the headless service, see:
+          # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+          ports:
+            - name: rpc
+              containerPort: 7235
+              protocol: TCP
+            - name: membership
+              containerPort: 6935
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 150
+            tcpSocket:
+              port: rpc
+          readinessProbe:
+            tcpSocket:
+              port: rpc
+          volumeMounts:
+            - name: config
+              mountPath: /etc/temporal/config/config_template.yaml
+              subPath: config_template.yaml
+            - name: dynamic-config
+              mountPath: /etc/temporal/dynamic_config
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      volumes:
+        - name: config
+          configMap:
+            name: "weipai-temporal-config"
+        - name: dynamic-config
+          configMap:
+            name: "weipai-temporal-dynamic-config"
+            items:
+            - key: dynamic_config.yaml
+              path: dynamic_config.yaml
+      terminationGracePeriodSeconds:
+---
+# Source: weipai-ops/charts/temporal/templates/server-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-worker
+  annotations:
+    
+  labels:
+    app.kubernetes.io/component: worker
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: temporal
+      app.kubernetes.io/instance: weipai
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      annotations:
+        checksum/config: a5f1377408c71b4183ed819d3d20228edb77c3fee1e1ed09e1c93d30411b766b
+        prometheus.io/job: temporal-worker
+        prometheus.io/scrape: 'true'
+        prometheus.io/scheme: http
+        prometheus.io/port: '9090'
+        
+      labels:
+        app.kubernetes.io/component: worker
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - name: temporal-worker
+          image: "temporalio/server:1.31.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SERVICES
+              value: worker
+            - name: TEMPORAL_SERVICES
+              value: worker
+            - name: TEMPORAL_SERVER_CONFIG_FILE_PATH
+              value: /etc/temporal/config/config_template.yaml
+            - name: TEMPORAL_DEFAULT_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+            - name: TEMPORAL_VISIBILITY_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          # For Istio service mesh - make sure ports are defined here and in the headless service, see:
+          # https://istio.io/latest/docs/ops/configuration/traffic-management/traffic-routing/#headless-services
+          ports:
+            - name: membership
+              containerPort: 6939
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/temporal/config/config_template.yaml
+              subPath: config_template.yaml
+            - name: dynamic-config
+              mountPath: /etc/temporal/dynamic_config
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      volumes:
+        - name: config
+          configMap:
+            name: "weipai-temporal-config"
+        - name: dynamic-config
+          configMap:
+            name: "weipai-temporal-dynamic-config"
+            items:
+            - key: dynamic_config.yaml
+              path: dynamic_config.yaml
+      terminationGracePeriodSeconds:
+---
+# Source: weipai-ops/templates/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weipai-ops-api
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+    app.kubernetes.io/component: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: weipai, app.kubernetes.io/component: api}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: api
+    spec:
+      serviceAccountName: weipai-ops-console
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: api
+          image: "registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          args: [api]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"100m","memory":"256Mi"}}
+          env:
+            - name: APP_ENV
+              value: production
+            - name: OPS_READ_ONLY
+              value: "true"
+            - name: WORKER_MODE
+              value: readonly_discovery
+            - name: CONNECTOR_MODE
+              value: real
+            - name: EXECUTION_CONFIG
+              value: '{"enabled":false,"bindings":[]}'
+            - name: AGENT_CONFIG
+              value: '{"enabled":false}'
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: "weipai-platform-database", key: DATABASE_URL}
+            - name: TEMPORAL_CONFIG
+              value: "{\"address\":\"weipai-temporal-frontend:7233\",\"namespace\":\"default\",\"task_queue\":\"weipai-readonly-discovery\"}"
+            - name: AUTH_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-console-auth", key: AUTH_CONFIG}
+            - name: API_HOST
+              value: 0.0.0.0
+          ports: [{name: http, containerPort: 8000}]
+          startupProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 20}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - {name: tmp, emptyDir: {sizeLimit: 64Mi}}
+---
+# Source: weipai-ops/templates/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weipai-ops-worker
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+    app.kubernetes.io/component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: weipai, app.kubernetes.io/component: worker}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: worker
+    spec:
+      serviceAccountName: weipai-ops-reader
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: worker
+          image: "registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          args: [worker]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"2","memory":"2Gi"},"requests":{"cpu":"200m","memory":"512Mi"}}
+          env:
+            - name: APP_ENV
+              value: production
+            - name: OPS_READ_ONLY
+              value: "true"
+            - name: WORKER_MODE
+              value: readonly_discovery
+            - name: CONNECTOR_MODE
+              value: real
+            - name: EXECUTION_CONFIG
+              value: '{"enabled":false,"bindings":[]}'
+            - name: AGENT_CONFIG
+              value: '{"enabled":false}'
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: "weipai-platform-database", key: DATABASE_URL}
+            - name: TEMPORAL_CONFIG
+              value: "{\"address\":\"weipai-temporal-frontend:7233\",\"namespace\":\"default\",\"task_queue\":\"weipai-readonly-discovery\"}"
+            - name: KUBERNETES_READER_TOKEN_FILE
+              value: /var/run/weipai-reader/token
+            - name: KUBERNETES_READER_CA_FILE
+              value: /var/run/weipai-reader/ca.crt
+            - name: KUBERNETES_CONFIG
+              value: "{\"base_url\":\"https://kubernetes.default.svc\",\"cluster_name\":\"ack-cluster\",\"namespace_allowlist\":[\"weipai-lint-1906a9a2\"]}"
+            - name: DISCOVERY_CONFIG
+              value: "{\"interval_seconds\":300,\"lookback_seconds\":900,\"schedule_id\":\"weipai-discovery-readonly\"}"
+            - name: CONNECTOR_READER_TOKENS
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: CONNECTOR_READER_TOKENS}
+            - name: OPS_PLATFORM_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: OPS_PLATFORM_CONFIG}
+            - name: ARMS_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: ARMS_CONFIG}
+            - name: GIT_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: GIT_CONFIG}
+            - name: CLOUD_CONFIG
+              valueFrom:
+                secretKeyRef: {name: "weipai-reader-runtime", key: CLOUD_CONFIG}
+          startupProbe:
+            exec: {command: [python, -c, "from pathlib import Path; raise SystemExit(not Path('/tmp/weipai-worker-ready').exists())"]}
+            periodSeconds: 5
+            failureThreshold: 120
+          readinessProbe:
+            exec: {command: [python, -c, "from pathlib import Path; raise SystemExit(not Path('/tmp/weipai-worker-ready').exists())"]}
+            periodSeconds: 10
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+            - {name: reader, mountPath: /var/run/weipai-reader, readOnly: true}
+      volumes:
+        - {name: tmp, emptyDir: {sizeLimit: 64Mi}}
+        - name: reader
+          projected:
+            defaultMode: 0440
+            sources:
+              - serviceAccountToken: {path: token, expirationSeconds: 3600}
+              - configMap:
+                  name: kube-root-ca.crt
+                  items: [{key: ca.crt, path: ca.crt}]
+---
+# Source: weipai-ops/templates/frontend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weipai-ops-frontend
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/part-of: weipai-ops, app.kubernetes.io/instance: weipai, app.kubernetes.io/component: frontend}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: frontend
+    spec:
+      serviceAccountName: weipai-ops-console
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 101, runAsGroup: 101, fsGroup: 101, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: frontend
+          image: "registry.invalid/weipai/frontend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"500m","memory":"256Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}
+          env:
+            - name: API_UPSTREAM
+              value: "weipai-ops-api:8000"
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 20}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+      volumes: [{name: tmp, emptyDir: {sizeLimit: 64Mi}}]
+---
+# Source: weipai-ops/charts/temporal/templates/server-namespace-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-namespace-1-7-0-1
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      name: weipai-temporal-namespace-1-7-0-1
+      labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: default
+      restartPolicy: OnFailure
+      initContainers:
+        - name: create-default-namespace
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['/bin/sh', '-c']
+          args: ['temporal operator namespace describe -n default || temporal operator namespace create -n default --retention 7d']
+          env:
+            - name: TEMPORAL_ADDRESS
+              value: weipai-temporal-frontend:7233
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      containers:
+        - name: done
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', 'echo "Namespace setup completed"']
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+---
+# Source: weipai-ops/charts/temporal/templates/test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: "weipai-temporal-test-cluster-health"
+  labels:
+    app.kubernetes.io/component: test
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: default
+  containers:
+  - name: cluster-health
+    image: "temporalio/admin-tools:1.31.0"
+    imagePullPolicy: IfNotPresent
+    command: ["temporal", "operator", "cluster", "health"]
+    env:
+      - name: TEMPORAL_ADDRESS
+        value: weipai-temporal-frontend:7233
+  restartPolicy: Never
+---
+# Source: weipai-ops/charts/temporal/templates/server-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: "weipai-lint-1906a9a2"
+  name: weipai-temporal-schema
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 600
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      name: weipai-temporal-schema
+      labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/name: temporal
+        helm.sh/chart: temporal-1.7.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: weipai
+        app.kubernetes.io/version: "1.32.0"
+        app.kubernetes.io/part-of: temporal
+    spec:
+      serviceAccountName: default
+      restartPolicy: OnFailure
+      initContainers:
+        - name: manage-schema-default-store
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c']
+          args:
+            - temporal-sql-tool setup-schema -v 0.0 && temporal-sql-tool update-schema --schema-dir /etc/temporal/schema/postgresql/v12/temporal/versioned
+          env:
+            - name: SQL_PLUGIN
+              value: postgres12
+            - name: SQL_HOST
+              value: postgres.platform.svc
+            - name: SQL_PORT
+              value: "5432"
+            - name: SQL_DATABASE
+              value: temporal
+            - name: SQL_USER
+              value: "temporal"
+            - name: SQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          volumeMounts:
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+        - name: manage-schema-visibility-store
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c']
+          args:
+            - temporal-sql-tool setup-schema -v 0.0 && temporal-sql-tool update-schema --schema-dir /etc/temporal/schema/postgresql/v12/visibility/versioned
+          env:
+            - name: SQL_PLUGIN
+              value: postgres12
+            - name: SQL_HOST
+              value: postgres.platform.svc
+            - name: SQL_PORT
+              value: "5432"
+            - name: SQL_DATABASE
+              value: temporal_visibility
+            - name: SQL_USER
+              value: "temporal"
+            - name: SQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: weipai-temporal-database
+                  key: password
+          volumeMounts:
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+
+      containers:
+        - name: done
+          image: "temporalio/admin-tools:1.31.0"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', 'echo "Store setup completed"']
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+---
+# Source: weipai-ops/templates/migration.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: weipai-ops-migrate
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: migration
+    spec:
+      # pre-install 时应用 SA 尚未创建；默认 SA 显式禁用 token。
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: migrate
+          image: "registry.invalid/weipai/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          command: [python, -m, alembic]
+          args: [upgrade, head]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"100m","memory":"256Mi"}}
+          env:
+            - {name: APP_ENV, value: production}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: "weipai-platform-database", key: DATABASE_URL}

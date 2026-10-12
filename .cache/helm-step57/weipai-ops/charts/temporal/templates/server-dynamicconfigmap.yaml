@@ -1,0 +1,16 @@
+---
+# Source: weipai-ops/charts/temporal/templates/server-dynamicconfigmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: "weipai-ops"
+  name: "weipai-temporal-dynamic-config"
+  labels:
+    app.kubernetes.io/name: temporal
+    helm.sh/chart: temporal-1.7.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: weipai
+    app.kubernetes.io/version: "1.32.0"
+    app.kubernetes.io/part-of: temporal
+data:
+  dynamic_config.yaml: |-

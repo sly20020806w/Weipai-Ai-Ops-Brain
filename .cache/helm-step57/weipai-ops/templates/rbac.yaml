@@ -1,0 +1,90 @@
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: weipai-ops-reader
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+automountServiceAccountToken: false
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: weipai-ops-executor
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+automountServiceAccountToken: false
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: weipai-ops-console
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+automountServiceAccountToken: false
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: weipai-ops-weipai-ops-namespaces
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+rules:
+  - apiGroups: [""]
+    resources: [namespaces]
+    verbs: [get, list]
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: weipai-ops-weipai-ops-namespaces
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+subjects:
+  - {kind: ServiceAccount, name: weipai-ops-reader, namespace: weipai-ops}
+roleRef:
+  {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: weipai-ops-weipai-ops-namespaces}
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: weipai-ops-weipai-ops-reader
+  namespace: weipai-observe
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list]
+---
+# Source: weipai-ops/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: weipai-ops-weipai-ops-reader
+  namespace: weipai-observe
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+subjects:
+  - {kind: ServiceAccount, name: weipai-ops-reader, namespace: weipai-ops}
+roleRef:
+  {apiGroup: rbac.authorization.k8s.io, kind: Role, name: weipai-ops-weipai-ops-reader}

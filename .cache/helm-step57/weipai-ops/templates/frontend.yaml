@@ -1,0 +1,52 @@
+---
+# Source: weipai-ops/templates/frontend.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: weipai-ops-frontend
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+spec:
+  type: ClusterIP
+  selector: {app.kubernetes.io/instance: weipai, app.kubernetes.io/component: frontend}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+# Source: weipai-ops/templates/frontend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weipai-ops-frontend
+  labels:
+    app.kubernetes.io/part-of: weipai-ops
+    app.kubernetes.io/instance: "weipai"
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/instance: weipai, app.kubernetes.io/component: frontend}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: weipai-ops
+        app.kubernetes.io/instance: "weipai"
+        app.kubernetes.io/component: frontend
+    spec:
+      serviceAccountName: weipai-ops-console
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 101, runAsGroup: 101, fsGroup: 101, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: frontend
+          image: "registry.invalid/weipai/frontend@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources: {"limits":{"cpu":"500m","memory":"256Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}
+          env:
+            - name: API_UPSTREAM
+              value: "weipai-ops-api:8000"
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 20}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+      volumes: [{name: tmp, emptyDir: {sizeLimit: 64Mi}}]

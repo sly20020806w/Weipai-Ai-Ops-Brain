@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="2" failures="1" skipped="0" tests="9" time="106.467" timestamp="2026-10-09T09:52:47.803494+08:00" hostname="Dragon"><testcase classname="tests.test_e2e_guard" name="test_socket_and_dns_block_before_connect[address0]" time="0.003" /><testcase classname="tests.test_e2e_guard" name="test_socket_and_dns_block_before_connect[address1]" time="0.001" /><testcase classname="tests.test_e2e_guard" name="test_real_http_transport_blocked_before_io" time="0.118" /><testcase classname="tests.test_e2e_guard" name="test_temporal_native_transport_requires_local_endpoint[example.invalid:7233]" time="0.001" /><testcase classname="tests.test_e2e_guard" name="test_temporal_native_transport_requires_local_endpoint[127.0.0.1:0]" time="0.001" /><testcase classname="tests.test_e2e_guard" name="test_temporal_native_transport_requires_local_endpoint[127.0.0.1:65536]" time="0.001" /><testcase classname="tests.test_e2e_integration" name="test_payment_alert_closed_loop[closed-loop]" time="86.591"><failure message="AssertionError: {&quot;detail&quot;:&quot;Temporal 接入处理中或暂时不可用，请重试；指纹会防止重复任务&quot;}&#10;assert 503 == 202&#10; +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code">tests\test_e2e_integration.py:215: in test_payment_alert_closed_loop
+    assert response.status_code == 202, response.text
+E   AssertionError: {"detail":"Temporal 接入处理中或暂时不可用，请重试；指纹会防止重复任务"}
+E   assert 503 == 202
+E    +  where 503 = &lt;Response [503 Service Unavailable]&gt;.status_code</failure></testcase><testcase classname="tests.test_e2e_integration" name="test_payment_alert_closed_loop[approval-rejected]" time="7.679"><error message="failed on setup with &quot;subprocess.CalledProcessError: Command '['F:\\Weipai AI Ops Brain\\backend\\.venv\\Scripts\\python.exe', '-m', 'alembic', 'upgrade', 'head']' returned non-zero exit status 1.&quot;">tests\test_e2e_integration.py:116: in database
+    migrate("upgrade", "head")
+tests\database_support.py:22: in migrate
+    subprocess.run(
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py:571: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['F:\\Weipai AI Ops Brain\\backend\\.venv\\Scripts\\python.exe', '-m', 'alembic', 'upgrade', 'head']' returned non-zero exit status 1.</error></testcase><testcase classname="tests.test_e2e_integration" name="test_payment_alert_closed_loop[verification-unrecovered]" time="2.942"><error message="failed on setup with &quot;subprocess.CalledProcessError: Command '['F:\\Weipai AI Ops Brain\\backend\\.venv\\Scripts\\python.exe', '-m', 'alembic', 'upgrade', 'head']' returned non-zero exit status 1.&quot;">tests\test_e2e_integration.py:116: in database
+    migrate("upgrade", "head")
+tests\database_support.py:22: in migrate
+    subprocess.run(
+C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py:571: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['F:\\Weipai AI Ops Brain\\backend\\.venv\\Scripts\\python.exe', '-m', 'alembic', 'upgrade', 'head']' returned non-zero exit status 1.</error></testcase></testsuite></testsuites>

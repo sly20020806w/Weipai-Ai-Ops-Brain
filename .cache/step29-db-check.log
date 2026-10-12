@@ -1,0 +1,33 @@
+已将本项目现有数据库配置加载到当前进程环境（不显示密码、不写文件）。
+已创建独立的本地临时测试库（不输出凭证）
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: F:\Weipai AI Ops Brain\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 317 items
+
+tests\test_database_integration.py ....                                  [  1%]
+tests\test_tasks_integration.py ........................................ [ 13%]
+..............................................                           [ 28%]
+tests\test_ledger_integration.py .................................       [ 38%]
+tests\test_graph_integration.py .......................                  [ 46%]
+tests\test_tools_integration.py ................                         [ 51%]
+tests\test_workflow_activities_integration.py ......                     [ 52%]
+tests\test_discovery_integration.py .........                            [ 55%]
+tests\test_timeline_integration.py .......                               [ 58%]
+tests\test_knowledge_integration.py ...............                      [ 62%]
+tests\test_events_integration.py .......                                 [ 64%]
+tests\test_scheduling_integration.py .sss                                [ 66%]
+tests\test_detection_integration.py .......                              [ 68%]
+tests\test_main_agent_integration.py ...........                         [ 71%]
+tests\test_runbooks_integration.py ................                      [ 76%]
+tests\test_experts_integration.py ..........................             [ 85%]
+tests\test_reviewer_integration.py ................                      [ 90%]
+tests\test_action_plans_integration.py ................                  [ 95%]
+tests\test_human_interaction_integration.py ...............              [100%]
+
+================= 314 passed, 3 skipped in 201.52s (0:03:21) ==================
+临时测试库已清理
+数据库基础层、AI Task、Evidence Ledger、审计、Context Graph 与 Tool Dispatcher、Workflow Activity、Change Timeline、Knowledge Brain 验收全部通过

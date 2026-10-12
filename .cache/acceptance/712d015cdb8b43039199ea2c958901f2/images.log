@@ -1,0 +1,217 @@
+构建：weipai-backend:step56
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from backend.Dockerfile
+#1 transferring dockerfile: 1.31kB 0.0s done
+#1 DONE 0.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 6.3s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#4 ...
+
+#5 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21
+#5 DONE 1.3s
+
+#4 [internal] load metadata for docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#4 DONE 1.9s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 643B 0.0s done
+#6 DONE 0.1s
+
+#7 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21
+#7 resolve ghcr.io/astral-sh/uv:0.12.23@sha256:61d393e44e249f2e4b526b6c7ddcecce245946826e608e11c93ad4f5bba55b21 0.1s done
+#7 DONE 0.1s
+
+#8 [build 1/7] FROM docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#8 resolve docker.io/library/python:3.12.15-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 0.1s done
+#8 DONE 0.1s
+
+#9 [internal] load build context
+#9 transferring context: 1.93MB 0.7s done
+#9 DONE 0.7s
+
+#10 [build 4/7] COPY backend/pyproject.toml backend/uv.lock backend/README.md ./
+#10 CACHED
+
+#11 [build 2/7] COPY --from=uv /uv /usr/local/bin/uv
+#11 CACHED
+
+#12 [build 3/7] WORKDIR /app
+#12 CACHED
+
+#13 [build 5/7] RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-install-project
+#13 CACHED
+
+#14 [build 6/7] COPY backend/app ./app
+#14 DONE 0.7s
+
+#15 [build 7/7] RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-editable
+#15 4.446 Resolved 46 packages in 4ms
+#15 5.227 Installed 1 package in 727ms
+#15 5.227  + weipai-ai-ops-brain==0.1.0 (from file:///app)
+#15 DONE 5.3s
+
+#16 [runtime 4/7] COPY --from=build /app/.venv /app/.venv
+#16 CACHED
+
+#17 [runtime 5/7] COPY backend/alembic.ini ./alembic.ini
+#17 CACHED
+
+#18 [runtime 6/7] COPY backend/alembic ./alembic
+#18 CACHED
+
+#19 [runtime 2/7] WORKDIR /app
+#19 CACHED
+
+#20 [runtime 3/7] RUN groupadd --gid 10001 weipai && useradd --uid 10001 --gid 10001 --no-create-home weipai
+#20 CACHED
+
+#21 [runtime 7/7] COPY --chmod=0555 deploy/images/backend-entrypoint.sh ./entrypoint.sh
+#21 CACHED
+
+#22 exporting to image
+#22 exporting layers done
+#22 exporting manifest sha256:a1d3043e235515d206e3d186f2f9763c4ee955716709747e36bfb47a8a4bc3f0 done
+#22 exporting config sha256:74c05ff983c7d4240ec12951a828129a2cef8b9f5f18bf1055675f81255b601d done
+#22 exporting attestation manifest sha256:b002eec1465a2e25161f05bb1ddab1eb53952d143e187558843d1749e6253527 0.1s done
+#22 exporting manifest list sha256:86bd62e73cb619d6402755b82a3538886abeda1204563a1e1d310b7c8fa950b0
+#22 exporting manifest list sha256:86bd62e73cb619d6402755b82a3538886abeda1204563a1e1d310b7c8fa950b0 0.0s done
+#22 naming to docker.io/library/weipai-backend:step56 done
+#22 unpacking to docker.io/library/weipai-backend:step56 0.0s done
+#22 DONE 0.3s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/tsci9zrivqg57uvwpww1ccgmw
+构建：weipai-frontend:step56
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from frontend.Dockerfile
+#1 transferring dockerfile: 1.17kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.9s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20
+#4 DONE 2.3s
+
+#5 [internal] load metadata for docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+#5 DONE 2.6s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 643B done
+#6 DONE 0.0s
+
+#7 [build 1/8] FROM docker.io/library/node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20
+#7 resolve docker.io/library/node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20 0.1s done
+#7 DONE 0.1s
+
+#8 [runtime 1/4] FROM docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+#8 resolve docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94 0.1s done
+#8 DONE 0.1s
+
+#9 [internal] load build context
+#9 transferring context: 2.79kB 5.1s
+#9 transferring context: 552.39kB 5.1s done
+#9 DONE 5.2s
+
+#10 [build 4/8] COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
+#10 CACHED
+
+#11 [build 2/8] WORKDIR /app
+#11 CACHED
+
+#12 [build 3/8] RUN npm install --global pnpm@11.25.0
+#12 CACHED
+
+#13 [build 5/8] RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile --store-dir /pnpm/store --network-concurrency=4 --child-concurrency=2
+#13 CACHED
+
+#14 [build 6/8] COPY frontend/src ./src
+#14 DONE 0.1s
+
+#15 [build 7/8] COPY frontend/index.html frontend/tsconfig*.json frontend/vite.config.ts ./
+#15 DONE 0.2s
+
+#16 [build 8/8] RUN pnpm run build
+#16 9.479 $ tsc -b && vite build
+#16 37.64 vite v8.3.3 building client environment for production...
+#16 38.35 transforming...
+#16 42.53 ✓ 3191 modules transformed.
+#16 43.52 rendering chunks...
+#16 45.28 computing gzip size...
+#16 45.37 dist/index.html                             1.37 kB │ gzip:   0.50 kB
+#16 45.37 dist/assets/index-iuLBN5Ou.css             18.69 kB │ gzip:   5.09 kB
+#16 45.37 dist/assets/ui-qgJN88Op.js                  0.13 kB │ gzip:   0.12 kB
+#16 45.37 dist/assets/ui-B34PiX7e.js                  0.46 kB │ gzip:   0.29 kB
+#16 45.37 dist/assets/rolldown-runtime-D2aABDIb.js    0.68 kB │ gzip:   0.41 kB
+#16 45.37 dist/assets/ui-C0UaT5IU.js                 13.71 kB │ gzip:   5.94 kB
+#16 45.37 dist/assets/ui-DmdeaKFQ.js                 17.02 kB │ gzip:   6.64 kB
+#16 45.37 dist/assets/vendor-Bw_IMsMP.js             39.80 kB │ gzip:  11.67 kB
+#16 45.37 dist/assets/ui-N5hmqWaf.js                 97.65 kB │ gzip:  31.02 kB
+#16 45.37 dist/assets/index-BKlUp5WY.js             141.91 kB │ gzip:  40.72 kB
+#16 45.37 dist/assets/ui-CNyWc0sp.js                190.62 kB │ gzip:  60.07 kB
+#16 45.37 dist/assets/ui-MvCKbgPX.js                224.51 kB │ gzip:  64.80 kB
+#16 45.37 dist/assets/react-C-Qar-KD.js             260.52 kB │ gzip:  82.84 kB
+#16 45.37 dist/assets/ui-1T2_-2AT.js                310.83 kB │ gzip: 105.60 kB
+#16 45.37 
+#16 45.64 ✓ built in 8.00s
+#16 DONE 48.2s
+
+#17 [runtime 3/4] COPY deploy/images/nginx.conf.template /etc/nginx/weipai.conf.template
+#17 CACHED
+
+#18 [runtime 2/4] COPY --from=build /app/dist /usr/share/nginx/html
+#18 CACHED
+
+#19 [runtime 4/4] COPY --chmod=0555 deploy/images/frontend-entrypoint.sh /usr/local/bin/weipai-frontend
+#19 CACHED
+
+#20 exporting to image
+#20 exporting layers 0.0s done
+#20 exporting manifest sha256:011b89555794fc2047245ef599bac2995a23fa21ad95144eec3fee7bf3696381 0.0s done
+#20 exporting config sha256:bdd88d2102f33112b71b1d409569237714d667ca73c304c16f11f809e7b2ab7f done
+#20 exporting attestation manifest sha256:8c8fed75ec977cd6e4c3e73375e0bd5d1977d20ed19f2ee9561d2151a1cf9952 0.1s done
+#20 exporting manifest list sha256:8e9fbb4f4d0341709f561ca7986bb82abda42bc71882417d0ae37c4dd0f1b966 0.1s done
+#20 naming to docker.io/library/weipai-frontend:step56 0.0s done
+#20 unpacking to docker.io/library/weipai-frontend:step56 0.1s done
+#20 DONE 0.4s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/8juqscn325yh5fnu7n0m8n2fi
+已创建镜像验收临时库（不打印凭证）
+通过：容器回环转发就绪
+通过：镜像内 Alembic 升级到现有 head
+本次镜像容器、Schedule 与临时数据库已清理
+Traceback (most recent call last):
+  File "F:\Weipai AI Ops Brain\scripts\check_images.py", line 463, in <module>
+    main()
+  File "F:\Weipai AI Ops Brain\scripts\check_images.py", line 455, in main
+    report = check_images(interactive=options.interactive)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Weipai AI Ops Brain\scripts\check_images.py", line 317, in check_images
+    wait_for(api_ready, "api /health HTTP 200、status=ok")
+  File "F:\Weipai AI Ops Brain\scripts\check_images.py", line 131, in wait_for
+    if check():
+       ^^^^^^^
+  File "F:\Weipai AI Ops Brain\scripts\check_images.py", line 303, in api_ready
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\38149\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1630, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['docker', 'exec', '2c9c9860069b8cc51b2bbfe4d2bc239b5a0c13f10be60eff365e74326cf8cda3', 'python', '-c', "import json,urllib.request; assert json.load(urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=2))['status']=='ok'"]' timed out after 10 seconds

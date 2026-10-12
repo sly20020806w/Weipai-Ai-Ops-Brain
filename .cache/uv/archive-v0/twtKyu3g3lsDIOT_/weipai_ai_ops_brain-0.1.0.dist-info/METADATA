@@ -1,0 +1,8 @@
+Metadata-Version: 2.5
+Name: weipai-ai-ops-brain
+Version: 0.1.0
+Summary: 微派 AI 业务运维平台的模块化单体后端
+Requires-Python: >=3.12
+Requires-Dist: fastapi>=0.142.2
+Requires-Dist: pydantic-settings>=2.15.0
+Requires-Dist: uvicorn>=0.54.0

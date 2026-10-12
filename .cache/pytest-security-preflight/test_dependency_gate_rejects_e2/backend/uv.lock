@@ -1,0 +1,4 @@
+[[package]]
+name = "synthetic"
+version = "1.0"
+source = { registry = "https://pypi.org/simple" }
